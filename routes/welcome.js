@@ -11,11 +11,11 @@ router.get('/:ani/:dialog', (req, res) => {
     var welcomeMessage = `Welcome ${req.params.ani}. Next step is ${req.params.dialog}`
     console.log(welcomeMessage)
 
-    const UserModel = require('../models/User')
-    let User = new UserModel({ nome:"Teste nome", ani: "21999999998" })
-    console.log(User.nome)
+    const UserModel = require('../models/user')
+    let user = new UserModel({ nome:"Teste nome", ani: "21999999998" })
+    console.log(user.nome)
 
-    User.save()
+    user.save()
     .then(doc => {
         console.log(doc)
     })
