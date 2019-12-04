@@ -1,10 +1,11 @@
 const mongoose = require('mongoose')
+const procedurePrincipal = require('../databases/ProcedurePrincipal')
 
-var userSchema = new mongoose.Schema({
+let userSchema = new mongoose.Schema({
     nome: String,
     ani: String,
     scoreAnatel: Number,
     tipoPlano: String 
 });
 
-module.exports = userSchema
+module.exports = mongoose.model('Users', userSchema)
