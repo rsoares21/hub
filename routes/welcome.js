@@ -11,10 +11,15 @@ router.get('/:ani/:dialog', (req, res) => {
     var welcomeMessage = `Welcome ${req.params.ani}. Next step is ${req.params.dialog}`
     console.log(welcomeMessage)
 
-    const UserModel = require('../models/user')
-    let user = new UserModel({ nome:"Teste nome", ani: "21999999998" })
-    console.log(user.nome)
+    const userModel = require('../models/user')
+    let User = new userModel({ nome:"Francisco", ani: "21999999998" })
+    console.log(User.nome)
 
+    const Dialog = require('../models/dialog')
+    //let Dialog = new dialogModel()
+    //console.log(Dialog.nome)
+
+    /*
     user.save()
     .then(doc => {
         console.log(doc)
@@ -23,6 +28,23 @@ router.get('/:ani/:dialog', (req, res) => {
         console.error(err)
     })
 
+    dialog.save()
+    .then(doc => {
+        console.log(doc)
+    })
+    .catch(err => {
+        console.error(err)
+    })
+    */
+
+    // get all the users
+    Dialog.find({ nome: `${req.params.dialog}`}, function(err, dialogs) {
+        if (err) throw err;
+    
+        // object of all the users
+        console.log(dialogs);
+    });
+    
     res.send(welcomeMessage)
 
 })
