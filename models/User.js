@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const procedurePrincipal = require('../databases/ProcedurePrincipal')
+const mongoDB_hub = require('../databases/mongoDB_hub')
 
 let userSchema = new mongoose.Schema({
     nome: String,

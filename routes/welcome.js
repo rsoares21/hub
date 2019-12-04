@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const UserModel = require('../models/User')
 
 // Get caller info from voice platform
 router.get('/', (req, res) => {
@@ -12,7 +11,8 @@ router.get('/:ani/:dialog', (req, res) => {
     var welcomeMessage = `Welcome ${req.params.ani}. Next step is ${req.params.dialog}`
     console.log(welcomeMessage)
 
-    let User = new UserModel({ nome:"Teste nome" })
+    const UserModel = require('../models/User')
+    let User = new UserModel({ nome:"Teste nome", ani: "21999999998" })
     console.log(User.nome)
 
     User.save()
