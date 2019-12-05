@@ -11,10 +11,10 @@ app.use('/welcome', welcomeRouter)
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.listen(3000, function(){
-    console.log('server is ready...')
+    console.log('server up!')
 
     app.get('/',(req, res) => {
-        res.send('Hello tcp/ip')
+        res.send('Hello tcp/ip!')
         console.log(req.body)
     })
 })
