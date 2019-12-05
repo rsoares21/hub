@@ -28,13 +28,53 @@ router.get('/:ani/:dialog', (req, res) => {
     */
 
 
+
+
+    /*
+
+
+
+    const BusinessRuleModel = require('../models/BusinessRule')
+    let BusinessRule = new BusinessRuleModel({
+        name: 'Redirect_Tipoplano',
+        dialogId: '', 
+        promptId: [{''}],
+        input: [{ fieldName: 'user.tipoPlano' }, { fieldName: 'user.ani' }],
+        description: 'Verifica o tipo de plano e redireciona para os dialog MenuPre ou MenuPos',
+        example: 'tipoPlano = PRE ou POS',
+        outputList: {
+            promptIds: [{_id: '5de875f9644fbd29805d911c'}],
+            dialogIds: [{_id: '5de875f9644fbd29805d911c'}]
+        },        
+    })
+
+    BusinessRule.save()
+        .then(doc => {
+            console.log(doc)
+        })
+        .catch(err => {
+            console.error(err)
+        })
+
+    */
+
+
+
+
     const PluginModel = require('../models/Plugin')
     let Plugin = new PluginModel({
-        moduleName: 'Greetings',
+        businessRuleId: '5de875f9644fbd29805d911c',
+        pluginFileName: 'Greetings',
         name: 'Greetings Plugin',
-        descricao: 'Plugin que saúda de acordo com a hora do dia',
+        description: 'Plugin que saúda de acordo com a hora do dia',
+        output: {
+            promptIds: [{_id: '5de875f9644fbd29805d911c'}],
+            dialogId: ''
+        },        
         onError: 'goto:GoodBye'
     })
+
+
 
     Plugin.save()
     .then(doc => {
@@ -43,6 +83,9 @@ router.get('/:ani/:dialog', (req, res) => {
     .catch(err => {
         console.error(err)
     })
+
+
+
 
     /*
 
