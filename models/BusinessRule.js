@@ -4,14 +4,14 @@ const mongoDB_hub = require('../databases/mongoDB_hub')
 
 let BusinessRuleSchema = new mongoose.Schema({
     name: String,
-    input: [{ fieldName: String }],
+    input: [{ _id:false, fieldName: String }],
     description: String,
     example: String,
-    outputList: {
-        promptIds: [{_id: mongoose.Schema.Types.ObjectId}],
-        dialogIds: [{_id: mongoose.Schema.Types.ObjectId}]
+    output: {
+        promptListIds: [{_id: mongoose.Schema.Types.ObjectId}],
+        dialogListIds: [{_id: mongoose.Schema.Types.ObjectId}]
     },
-
+    documents:[Object]
 
 });
 

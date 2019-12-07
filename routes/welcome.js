@@ -12,41 +12,34 @@ router.get('/:ani/:dialog', (req, res) => {
     console.log(welcomeMessage)
 
 
-    /*
     const userModel = require('../models/User')
-    let User = new userModel({ nome: "Francisco", ani: "21999999998" })
+    let User = new userModel({ nome: "Ricardo", ani: "21999999998" })
     console.log(User.nome)
 
-    user.save()
-    .then(doc => {
-        console.log(doc)
-    })
-    .catch(err => {
-        console.error(err)
-    })
+    User.save()
+        .then(doc => {
+            console.log(doc)
+        })
+        .catch(err => {
+            console.error(err)
+        })
 
-    */
-
-
-
-
-    /*
 
 
 
     const BusinessRuleModel = require('../models/BusinessRule')
     let BusinessRule = new BusinessRuleModel({
         name: 'Redirect_Tipoplano',
-        dialogId: '', 
-        promptId: [{''}],
-        input: [{ fieldName: 'user.tipoPlano' }, { fieldName: 'user.ani' }],
-        description: 'Verifica o tipo de plano e redireciona para os dialog MenuPre ou MenuPos',
+        input: [{ fieldName: 'user.tipoPlano'}, {fieldName: 'user.ani'}, {fieldName: 'PROMO100'}],
+        description: 'Verifica o tipo de plano e redireciona para os dialogs MenuPre ou MenuPos',
         example: 'tipoPlano = PRE ou POS',
-        outputList: {
-            promptIds: [{_id: '5de875f9644fbd29805d911c'}],
-            dialogIds: [{_id: '5de875f9644fbd29805d911c'}]
-        },        
+        output: {
+            promptListIds: [{ _id: '5de875f9644fbd29805d911c' }],
+            dialogListIds: [{ _id: '5de875f9644fbd29805d911c' }]
+        },
+        documents: [{ }]
     })
+
 
     BusinessRule.save()
         .then(doc => {
@@ -56,40 +49,29 @@ router.get('/:ani/:dialog', (req, res) => {
             console.error(err)
         })
 
-    */
-
-
-
 
     const PluginModel = require('../models/Plugin')
     let Plugin = new PluginModel({
-        businessRuleId: '5de875f9644fbd29805d911c',
+        businessRulesListIds: [{  _id: '5de875f9644fbd29805d911c' , _id: '5de875f9644fbd29805d911c' }],
         pluginFileName: 'Greetings',
         name: 'Greetings Plugin',
         description: 'Plugin que saúda de acordo com a hora do dia',
-        output: {
-            promptIds: [{_id: '5de875f9644fbd29805d911c'}],
-            dialogId: ''
-        },        
-        onError: 'goto:GoodBye'
+        onError: 'goto:GoodBye',
+        version: 0.02
     })
-
 
 
     Plugin.save()
-    .then(doc => {
-        console.log(doc)
-    })
-    .catch(err => {
-        console.error(err)
-    })
+        .then(doc => {
+            console.log(doc)
+        })
+        .catch(err => {
+            console.error(err)
+        })
 
 
 
 
-    /*
-
-    
     const DialogModel = require('../models/Dialog')
     let Dialog = new DialogModel({
         ivrProfile: '5de875f9644fbd29805d911c',
@@ -121,12 +103,7 @@ router.get('/:ani/:dialog', (req, res) => {
 
         console.log('reflect>' + Reflect.ownKeys(Dialog));
     });
-    */
-
-
-
-
-    /*
+    
 
     const voiceEventModel = require('../core/models/VoiceEvent')
     let VoiceEvent = new voiceEventModel({ type: 'nospeech', counter: 3, prompt: 'bye.wav', action: 'dialog', value: 'GoodBye', dialogId: '5de848a461b8974a30caf4b2'})
@@ -147,7 +124,18 @@ router.get('/:ani/:dialog', (req, res) => {
     });
 
 
-    */
+    const PromptModel = require('../models/Prompt')
+    let Prompt = new PromptModel({ name: 'hello.wav', content:'Olá, seja bem vindo!'})
+
+    Prompt.save()
+    .then(doc => {
+        console.log(doc)
+    })
+    .catch(err => {
+        console.error(err)
+    })
+
+
 
     res.send(welcomeMessage)
 
