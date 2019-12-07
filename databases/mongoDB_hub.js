@@ -7,17 +7,17 @@ const pwd = encodeURIComponent('Voice$2020')
 
 class Database {
   constructor() {
-    console.log(`Mongo Init ${server}:${database}`)
+    //console.log(`Mongo Init ${server}:${database}`)
     this._connect()
   }
 
   _connect() {
     mongoose.connect(`mongodb://${user}:${pwd}@${server}/${database}`, { useNewUrlParser: true, useUnifiedTopology: true })
       .then(() => {
-        console.log('Database connection successful')
+        //console.log('Database connection successful')
       })
       .catch(err => {
-        console.error('Database connection error')
+        //console.error('Database connection error')
       })
   }
 }
