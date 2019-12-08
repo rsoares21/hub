@@ -1,22 +1,23 @@
-class DialogRenderer {
+
+
+class DialogRunner {
     constructor() {
-        console.log(`Dialog Renderer Initied!`)
+        console.log(`Dialog Renderer Init`)
     }
 
-    Render(req, res) {
+    Render(req, session) {
 
-        console.log(`Renderinggg ${req}`)
         var welcomeMessage = `Welcome ${req.params.ani}. Next step is ${req.params.dialog}`
-        console.log(welcomeMessage)
+        console.log(`[${req.session.id}] ${welcomeMessage}`)
 
         // searches for Dialog info in database
         const DialogModel = require('../../models/Dialog')
         DialogModel.find({ name: `${req.params.dialog}` }, function (err, dialogInvoke) {
 
             if (err || dialogInvoke.length === 0) {
-                console.log(`Dialog ${req.params.dialog} not found`);
+                console.log(`[${req.session.id}] Dialog ${req.params.dialog} not found`);
             } else {
-                console.log(`Dialog ${req.params.dialog} OK`);
+                console.log(`[${req.session.id}] Dialog ${req.params.dialog} Loaded`);
 
                 // Load plugins list
                 for (var pli = 0; pli < dialogInvoke[0].initPlugins.length; pli++) {
@@ -25,18 +26,21 @@ class DialogRenderer {
                     PluginModel.find({ _id: `${dialogInvoke[0].initPlugins[pli]._id}` }, function (err, pluginInvoke) {
 
                         if (err || pluginInvoke.length === 0) {
-                            console.log(`Plugin ${dialogInvoke[0].initPlugins[0]._id} not found`)
+                            console.log(`[${req.session.id}] Plugin ${dialogInvoke[0].initPlugins[0]._id} not found`)
                         } else {
                             //console.log(`Plugin ${pluginInvoke._id}`)
-                            console.log(`plugin found : ${pluginInvoke}`)
+                            console.log(`[${req.session.id}] Plugin ${dialogInvoke[0].initPlugins[0]._id} Loaded`)
                         }
                     })
                 }
             }
+
         });
 
+        return ` <vxml></vxml>`
+        
 
     }
 }
 
-module.exports = new DialogRenderer() 
+module.exports = new DialogRunner() 

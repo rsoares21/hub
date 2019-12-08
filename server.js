@@ -2,9 +2,12 @@
 const express = require('express')
 const session = require('express-session')
 const bodyParser = require('body-parser')
+const redis = require('redis');
+const redisStore = require('connect-redis')(session);
+const client  = redis.createClient();
 //const welcomeRouter = require('./routes/welcome')
 
-const DialogRenderer = require ('./core/modules/DialogRenderer')
+const DialogRunner = require ('./core/modules/DialogRunner')
 
 const app = express()
 app.use(express.json()) // talvez seja opcional no final
@@ -12,23 +15,26 @@ app.use(bodyParser.urlencoded({ extended: true }))
 //app.use('/welcome', welcomeRouter)
 
 app.use(session({
-    'secret': '343ji43j4n3jn4jk3n',
-    resave: false,
-    saveUninitialized: true
-}))
+    secret: 'ssshhhhh',
+    // create new redis store.
+    store: new redisStore({ host: 'localhost', port: 6379, client: client,ttl : 260}),
+    saveUninitialized: false,
+    resave: false
+}));
+
 
 app.listen(3000, function () {
-    console.log('\n\n server up!')
+    console.log('\n\nHub Server up!')
 
     app.get('/', (req, res) => {
-        console.log(`session[\'${req.sessionID}\']` )
+        //console.log(`session[\'${req.sessionID}\']` )
     }),
     
     app.get('/welcome/:ani/:dialog', (req, res) => {
 
-        console.log(`session[\'${req.sessionID}\']` )
-        DialogRenderer.Render(req, res)
-        res.send('done.')
+        console.log(`[${req.sessionID}]` )
+        res.set('Content-Type', 'text/xml');
+        res.send(DialogRunner.Render(req, req.session))
     })
 })
 
