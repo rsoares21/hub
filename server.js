@@ -27,7 +27,7 @@ app.listen(3000, function () {
     console.log('\n\nHub Server up!')
 
     app.get('/', (req, res) => {
-        //console.log(`session[\'${req.sessionID}\']` )
+        //console.log(`session[\'${-}\']` )
     }),
     
     app.get('/welcome/:ani/:dialog', (req, res) => {

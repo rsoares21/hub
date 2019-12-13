@@ -8,7 +8,8 @@ let PluginSchema = new mongoose.Schema({
     name: String,
     description: String,
     onError: String,
-    version: Number
+    version: Number,
+    output: String
 });
 
 module.exports = mongoose.model('Plugins', PluginSchema)

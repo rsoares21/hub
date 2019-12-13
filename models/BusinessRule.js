@@ -1,10 +1,11 @@
 const mongoose = require('mongoose')
 const mongoDB_hub = require('../databases/mongoDB_hub')
+const DataInterface = require('../models/DataInterface')
 
 
 let BusinessRuleSchema = new mongoose.Schema({
     name: String,
-    input: [{ _id:false, fieldName: String }],
+    input: [{_id: mongoose.Schema.Types.ObjectId}],
     description: String,
     example: String,
     output: {

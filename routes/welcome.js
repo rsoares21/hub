@@ -24,8 +24,30 @@ router.get('/:ani/:dialog', (req, res) => {
 
     console.log('session2.2 >  ' + req.sessionID)
 
-    var welcomeMessage = `Welcome ${req.params.ani}. Next step is ${req.params.dialog}`
+    var welcomeMessage = `REQUEST from ${req.params.ani}. Dialog ${req.params.dialog}`
     //console.log(welcomeMessage)
+
+
+/*
+
+    const dataInterfaceModel = require('../../models/DataInterface')
+    let DataInterface = new dataInterfaceModel({ name: "SIEBEL", items: [] })
+    console.log(DataInterface.name)
+
+    DataInterface.save()
+        .then(doc => {
+            console.log(doc)
+        })
+        .catch(err => {
+            console.error(err)
+        })
+
+
+*/
+
+
+
+/*
 
     const DialogModel = require('../models/Dialog')
     DialogModel.find({ name: `${req.params.dialog}` }, function (err, dialogInvoke) {
@@ -41,6 +63,7 @@ router.get('/:ani/:dialog', (req, res) => {
         }
     });
 
+    */
 
     /*
         const userModel = require('../models/User')
