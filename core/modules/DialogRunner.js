@@ -15,7 +15,7 @@ class DialogRunner {
         console.log(`[${req.session.id}] ${welcomeMessage}`)
 
         // Loads Dialog info from db
-        const DialogModel = require('../../models/Dialog')
+        const DialogModel = require('../../models/VXMLDialog')
         DialogModel.find({ name: `${req.params.dialog}` }, function (err, dialogInvoke) {
 
             if (err || dialogInvoke.length === 0) {

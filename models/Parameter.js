@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 const mongoDB_hub = require('../databases/mongoDB_hub')
 
-let PromptSchema = new mongoose.Schema({
+let ParameterSchema = new mongoose.Schema({
     name: String,
     text: String 
 });
 
-module.exports = mongoose.model('Prompts', PromptSchema)
+module.exports = mongoose.model('Parameter', ParameterSchema)
