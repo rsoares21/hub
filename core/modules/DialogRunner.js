@@ -44,12 +44,12 @@ class DialogRunner {
                             console.log(`[${req.session.id}] Plugin : ${pluginInvoke.name} Loaded`)
 
                             // Load businessrules for current plugin execution
-                            if (pluginInvoke[pli].businessRulesListIds == null) {
+                            if (pluginInvoke[pli].businessRulesList == null) {
                                 console.log(`[${req.session.id}] Plugin : ${pluginInvoke[pli].name} falied.`)
                             } else {
 
                             const BusinessRuleModel = require('../../models/BusinessRule')
-                            BusinessRuleModel.findOne({ name: `${pluginInvoke[pli].businessRulesListIds}`})
+                            BusinessRuleModel.findOne({ name: `${pluginInvoke[pli].businessRulesList}`})
 
 
                             }

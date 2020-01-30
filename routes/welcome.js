@@ -101,7 +101,7 @@ router.get('/:ani/:dialog', (req, res) => {
     
         const PluginModel = require('../models/Plugin')
         let Plugin = new PluginModel({
-            businessRulesListIds: [{ _id: '5de875f9644fbd29805d911c', _id: '5de875f9644fbd29805d911c' }],
+            businessRulesList: [{ _id: '5de875f9644fbd29805d911c', _id: '5de875f9644fbd29805d911c' }],
             pluginFileName: 'Greetings',
             name: 'Greetings Plugin',
             description: 'Plugin que saúda de acordo com a hora do dia',
