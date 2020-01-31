@@ -1,4 +1,7 @@
 
+// Essa classe vai carregar os dialogs de forma a atender todos os tipos de responses, chamando a classe tratadora correspondente
+// Ex: VXMLDialogParser / HTMLDialogParser 
+// OBS : To create a unique json in "hub format" to share the response items with other applications
 
 class DialogRunner {
     constructor() {
@@ -15,7 +18,7 @@ class DialogRunner {
         console.log(`[${req.session.id}] ${welcomeMessage}`)
 
         // Loads Dialog info from db
-        const DialogModel = require('../../models/VXMLDialog')
+        const DialogModel = require('../models/mongoose/Dialog')
         DialogModel.find({ name: `${req.params.dialog}` }, function (err, dialogInvoke) {
 
             if (err || dialogInvoke.length === 0) {
@@ -26,7 +29,7 @@ class DialogRunner {
                 // Loads plugins list
                 for (var pli = 0; pli < dialogInvoke[0].initPlugins.length; pli++) {
                     console.log(`[${req.session.id}] Searching pluings for Dialog ${dialogInvoke[0].name}`)
-                    const PluginModel = require('../../models/Plugin')
+                    const PluginModel = require('../models/mongoose/Plugin')
                     PluginModel.find({ _id: `${dialogInvoke[0].initPlugins[pli]._id}` }, function (err, pluginInvoke) {
 
 
@@ -48,7 +51,7 @@ class DialogRunner {
                                 console.log(`[${req.session.id}] Plugin : ${pluginInvoke[pli].name} falied.`)
                             } else {
 
-                            const BusinessRuleModel = require('../../models/BusinessRule')
+                            const BusinessRuleModel = require('../models/mongoose/BusinessRule')
                             BusinessRuleModel.findOne({ name: `${pluginInvoke[pli].businessRulesList}`})
 
 

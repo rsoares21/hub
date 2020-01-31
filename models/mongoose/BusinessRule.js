@@ -1,14 +1,14 @@
 const mongoose = require('mongoose')
-const mongoDB_hub = require('../databases/mongoDB_hub')
-const DataInterface = require('./IntegrationDataPath')
+const mongoDB_hub = require('../../databases/mongoDB_hub')
 
+// Deve ser implementada de forma generica e contemplando direcionamento de falhas Ex: consultaSaldo / 
 
 let BusinessRuleSchema = new mongoose.Schema({
     name: { type : String , unique : true, required : true, dropDups: true }, 
     inputList: [{   
-                type: String,   // integrationDataPath/metadataPath/parameter/text
-                value: String,  // required when type == 'text'
-                _id: mongoose.Schema.Types.ObjectId // required when type in ['integrationDataPath','metadataPath','param']
+                inputType: String,   // dataPath/metadataPath/parameter/text
+                value: { type = String, required: function() { return this.inputList.inputType === 'text'; }}, // required when type == 'text'
+                _id: mongoose.Schema.Types.ObjectId // required when type in ['dataPath','metadataPath','param']
             }], 
     description: String,
     example: String,
