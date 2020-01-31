@@ -18,7 +18,7 @@ class DialogRunner {
         console.log(`[${req.session.id}] ${welcomeMessage}`)
 
         // Loads Dialog info from db
-        const DialogModel = require('../models/mongoose/Dialog')
+        const DialogModel = require('./database/models/mongoose/Dialog')
         DialogModel.find({ name: `${req.params.dialog}` }, function (err, dialogInvoke) {
 
             if (err || dialogInvoke.length === 0) {
@@ -29,7 +29,7 @@ class DialogRunner {
                 // Loads plugins list
                 for (var pli = 0; pli < dialogInvoke[0].initPlugins.length; pli++) {
                     console.log(`[${req.session.id}] Searching pluings for Dialog ${dialogInvoke[0].name}`)
-                    const PluginModel = require('../models/mongoose/Plugin')
+                    const PluginModel = require('./database/models/mongoose/Plugin')
                     PluginModel.find({ _id: `${dialogInvoke[0].initPlugins[pli]._id}` }, function (err, pluginInvoke) {
 
 
@@ -51,18 +51,18 @@ class DialogRunner {
                                 console.log(`[${req.session.id}] Plugin : ${pluginInvoke[pli].name} falied.`)
                             } else {
 
-                            const BusinessRuleModel = require('../models/mongoose/BusinessRule')
+                            const BusinessRuleModel = require('./database/models/mongoose/BusinessRule')
                             BusinessRuleModel.findOne({ name: `${pluginInvoke[pli].businessRulesList}`})
-
 
                             }
 
-
-
+                            // TODO
                             
-
-
-
+                            // 1 - Carregar as integrações dinamicamente caso os datapaths ainda nao tenham sido carregados no redis
+                            // 2 - Desenvolver a escrita do metadataPath no redis para cada plugin executado
+                            // 3 - Chamar o Parser de acordo com o tipo definido e gerar output
+                            
+                            
                         }
                     })
                 }

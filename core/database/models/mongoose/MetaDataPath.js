@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const mongoDB_hub = require('../../core/database/mongoDB_hub')
+const mongoDB_hub = require('../../mongoDB_hub')
 
 let MetaDataPathSchema = new mongoose.Schema({
     name: {type: String, unique : true, required : true},

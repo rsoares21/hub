@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const mongoDB_hub = require('../../core/database/mongoDB_hub')
+const mongoDB_hub = require('../../mongoDB_hub')
 
 // Deve ser implementada de forma generica e contemplando direcionamento de falhas Ex: consultaSaldo / 
 
