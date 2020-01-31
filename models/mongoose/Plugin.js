@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const mongoDB_hub = require('../../databases/mongoDB_hub')
+const mongoDB_hub = require('../../core/database/mongoDB_hub')
 
 let PluginSchema = new mongoose.Schema({
     name: String,

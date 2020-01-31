@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
-const mongoDB_hub = require('../../databases/mongoDB_hub')
+const mongoDB_hub = require('../../core/database/mongoDB_hub')
 
 
 // Um dialog representa uma interacão com o usuário, abstraindo o front end e respondendo dinamicamente
 // O objetivo é abstrair os tipos de entradas e saídas
 
 let DialogSchema = new mongoose.Schema({
-    profile: mongoose.Schema.Types.ObjectId,    // vai definir o tipo de resposta que sera retornada Ex: TEXT, VXML, HTML, JSON, etc...
+    application: mongoose.Schema.Types.ObjectId,    // nome da aplicação
     name: String,   // Nome do dialogo/interação
     initPrompt: String,     //slot reservado para mensagem fixa de inicio do dialog
     menuOptions: [{
