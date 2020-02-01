@@ -2,9 +2,8 @@ const mongoose = require('mongoose')
 const mongoDB_hub = require('../../mongoDB_hub')
 
 let DataPathSchema = new mongoose.Schema({
-    parentIntegration: {type: String, unique : true, required : true},  // Nome da integracão que retorna as informações
-    path: {type: String, unique : true, required : true},   // path unico representando o endereco da informação Ex: plano.tipo
-    dataPathList: [{ _id: mongoose.Schema.Types.ObjectId}]  // Lista de dataPaths da Interface
+    parent: { type: String, unique: true, required: true },  // Nome da BusinessRule/Integracao atendida. Tbm possivel identificar se meta ou datapath pelo parent
+    path: { type: String, unique: true, required: true },   // METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD /  & DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
 });
 
 module.exports = mongoose.model('DataPath', DataPathSchema)

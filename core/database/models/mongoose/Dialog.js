@@ -7,7 +7,7 @@ const mongoDB_hub = require('../../mongoDB_hub')
 
 let DialogSchema = new mongoose.Schema({
     application: mongoose.Schema.Types.ObjectId,    // nome da aplicação
-    name: { type : String , unique : true, required : true, dropDups: true },   // Nome do dialogo/interação. 
+    name: { type: String, unique: true, required: true, dropDups: true },   // Nome do dialogo/interação. 
     initPrompt: String,     //slot reservado para mensagem fixa de inicio do dialog
     menuOptions: [{
         input: String,
@@ -18,7 +18,7 @@ let DialogSchema = new mongoose.Schema({
     hubSimpleTextResponse: String,  // slot pra preenchimento caso profile = TEXT/JSON
 
     dialogVersion: Number,   // usado pra controle de versionamento do dialogo
-    flagActive: boolean ,
+    flagActive: boolean,
     channel: String // Recebido no body do request. Vai definir qual o output sera gerado. Tratamento omni
 
 });

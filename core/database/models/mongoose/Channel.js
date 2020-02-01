@@ -8,8 +8,8 @@ const mongoDB_hub = require('../../mongoDB_hub')
 // Ex: Json = objeto json
 
 let ChannelSchema = new mongoose.Schema({
-    name: {type: String, unique : true, required : true},
-    descricao: {type: String, required : true}
+    name: { type: String, unique: true, required: true },
+    descricao: { type: String, required: true }
 });
 
 module.exports = mongoose.model('Channel', ChannelSchema)
