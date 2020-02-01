@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const mongoDB_hub = require('../../mongoDB_hub')
 
-// Representa um tipo de resposta para o parser 
+// Representa um tipo de resposta para o parser ser acionado
 // Ex: Voice = vxml format
 // Ex: Web = html format
 // Ex: Text = texto puro
