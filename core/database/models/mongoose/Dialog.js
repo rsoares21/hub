@@ -14,8 +14,8 @@ let DialogSchema = new mongoose.Schema({
         dialog: String
     }],
 
-    hubModelsResponse: [{ _id: mongoose.Schema.Types.ObjectId }], // objetos que serão retornados e apresentados ao usuario pelo DialogRunner
-    hubSimpleTextResponse: String,  // slot pra preenchimento caso profile = TEXT/JSON
+    //hubModelsResponse: [{ _id: mongoose.Schema.Types.ObjectId }], // objetos que serão retornados e apresentados ao usuario pelo DialogRunner
+    //hubSimpleTextResponse: String,  // slot pra preenchimento caso profile = TEXT/JSON
 
     dialogVersion: Number,   // usado pra controle de versionamento do dialogo
     flagActive: boolean,
