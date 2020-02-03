@@ -11,7 +11,6 @@ class DialogRunner {
     Render(req, session) {
 
 
-
         let output
 
         var welcomeMessage = `REQUEST [${req.params.ani}] DIALOG : ${req.params.dialog}`
@@ -59,7 +58,7 @@ class DialogRunner {
                             // TODO
                             
                             // 1 - Carregar as integrações dinamicamente caso os datapaths ainda nao tenham sido carregados no redis
-                            // 2 - Desenvolver a escrita do metadataPath no redis para cada plugin executado
+                            // 2 - Desenvolver a escrita do metadataPath no redis para cada plugin executado (PluginRunner)
                             // 3 - Chamar o Parser de acordo com o tipo definido e gerar output
                             
                             
