@@ -3,7 +3,6 @@ const router = express.Router()
 const cookieParser = require('cookie-parser');
 const session = require('express-session')
 
-
 const app = express()
 app.use(cookieParser())
 app.use(session({
@@ -12,17 +11,8 @@ app.use(session({
     saveUninitialized: true
 }))
 
-
-// Get caller info from voice platform
-router.get('/', (req, res) => {
-    console.log('session2.2 >  ' + req.sessionID)
-    res.send('missing caller info.')
-})
-
 // Get caller info from voice platform :> Get ANI from parameters
-router.get('/:ani/:dialog', (req, res) => {
-
-    console.log('session2.2 >  ' + req.sessionID)
+router.get('/helper/:dialog', (req, res) => {
 
     var welcomeMessage = `REQUEST from ${req.params.ani}. Dialog ${req.params.dialog}`
     //console.log(welcomeMessage)

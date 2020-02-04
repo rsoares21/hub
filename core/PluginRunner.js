@@ -5,7 +5,7 @@
 
 class DialogRunner {
     constructor() {
-        console.log(`Dialog Renderer Init`)
+        console.log(`Plugin Runner Initiated`)
     }
 
     Render(req, session) {
