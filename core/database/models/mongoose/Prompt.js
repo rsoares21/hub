@@ -4,7 +4,8 @@ const mongoDB_hub = require('../../mongoDB_hub')
 let PromptSchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true },
     content: { type: String, unique: true, required: true },    //  Conteudo em formato texto
-    value: String,  //  Nome da midia, Ex: bomdia.wav (Voice)
+    filename: String,  //  Nome da midia, Ex: bomdia.wav (Voice)
+    businessRuleId: mongoose.Schema.Types.ObjectId, //  Se for um prompt dinamico, deve atender uma regra de negócio
     modeltype: "Prompt"
 });
 

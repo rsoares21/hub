@@ -11,6 +11,15 @@ class DialogRunner {
     Render(req, session) {
 
 
+
+        // TODO
+        //
+        //  Desenvolver uma logica para READ_DIALOG ou EXECUTE_OPTION do Dialog
+        //
+
+
+
+
         let output
 
         var welcomeMessage = `REQUEST [${req.params.ani}] DIALOG : ${req.params.dialog}`
