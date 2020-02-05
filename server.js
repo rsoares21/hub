@@ -45,7 +45,7 @@ app.listen(3000, function () {
                 application: '5e3a16973c95e10290087816',
                 name: `${req.params.dialog}`,
                 flagSubDialog: false,
-                plugins: [{ _id: '5e3a16973c95e10290087816' }, { _id: '5e3a16973c95e10290087816' }],
+                prompts: [{ _id: '5e3a16973c95e10290087816' }, { _id: '5e3a16973c95e10290087816' }],
                 optionsList: [{
                     option: '1',
                     _id: '5e3a1e67bd09b618fc32ffaa',
@@ -79,34 +79,59 @@ app.listen(3000, function () {
 
         }),
 
+        app.get('/hub/helper/prompt/:prompt', (req, res) => {
+
+            let welcomeMessage = `PROMPT : ${req.params.prompt}`
+            console.log(`[${req.session.id}] ${welcomeMessage}`)
+
+            const PluginModel = require('./core/database/models/mongoose/Plugin')
+            let Plugin = new PluginModel({
+                name: `${req.params.plugin}`,
+                description: 'Retrieves system Information like ip address, current_date, diskspace, etc...',
+                pluginWorker: {
+                    name: 'SystemInformation',   // Nome da classe tratadora desse plugin Ex: SiebelTranslator
+                    pluginMethods: [{
+                        name: 'getHourOfDay',   //  Nome da function no plugin Ex: isPrepago, isPosPago  fullpath={pluginWorker.pluginMethod}
+                        description: 'retorna a hora do dia em formato 24h'
+                    }]
+                }
+            })
+
+            Plugin.save()
+                .then(doc => {
+                    //console.log(doc)
+                    console.log(`Plugin de teste ${Plugin.name} salvo`)
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+
+            res.end(``)
+
+        }),
+
         app.get('/hub/helper/plugin/:plugin', (req, res) => {
 
             let welcomeMessage = `PLUGIN : ${req.params.plugin}`
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
-            // CREATE TEMPLATE PLUGIN *DEVONLY*
-
             const PluginModel = require('./core/database/models/mongoose/Plugin')
             let Plugin = new PluginModel({
-                name: `${req.params.dialog}`,
-                description: 'Plugin que saúda de acordo com a hora do dia',
-                businessRulesList: [{ _id: mongoose.Schema.Types.ObjectId }],
+                name: `${req.params.plugin}`,
+                description: 'Retrieves system Information like ip address, current_date, diskspace, etc...',
                 pluginWorker: {
-                    name: { type: String, unique: true, required: true },   // Nome da classe tratadora desse plugin Ex: SiebelTranslator
+                    name: 'SystemInformation',   // Nome da classe tratadora desse plugin Ex: SiebelTranslator
                     pluginMethods: [{
-                        name: { type: String, unique: true, required: true },   //  Nome da function no plugin Ex: isPrepago, isPosPago  fullpath={pluginWorker.pluginMethod}
-                        description: String
+                        name: 'getHourOfDay',   //  Nome da function no plugin Ex: isPrepago, isPosPago  fullpath={pluginWorker.pluginMethod}
+                        description: 'retorna a hora do dia em formato 24h'
                     }]
                 }
-
             })
 
-            //console.log(Dialog.name)
-
-            Dialog.save()
+            Plugin.save()
                 .then(doc => {
                     //console.log(doc)
-                    console.log(`Dialog de teste ${Dialog.name} salvo`)
+                    console.log(`Plugin de teste ${Plugin.name} salvo`)
                 })
                 .catch(err => {
                     console.error(err)
@@ -128,13 +153,15 @@ app.listen(3000, function () {
 
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `${req.params.businessrule}`,
+                plugin:'5e3b1d36922477484406cc68',
+                pluginMethod:'5e3b1d36922477484406cc69',
                 inputList: [{   //  
-                    _id: "5e3b0234e389162f5835e761" //  Datapath id
+                    _id: "5e3b0234e389162f5835e761" //  datapath
                 }],
                 description: "Validar o horario da requisicao de acordo com a data passada no parametro",
                 example: "Entre 00:00 e 11:59 'bom dia' / 12:00 e 17:59 'boa tarde' / 18:00 e 23:59 'boa noite'",
-                output: {   //  retorna um obj dataPath, mas a partir do output será tratado como metadataPath
-                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]  // retorna o dataPath : SIEBEL.tipoPlano
+                output: {
+                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]
                 },
                 expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
 
