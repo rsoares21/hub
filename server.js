@@ -128,17 +128,14 @@ app.listen(3000, function () {
 
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `${req.params.businessrule}`,
-                inputList: [{
-                    modelType: "Parameter",
-                    _id: "5e3a4e4fbb14462c44c87598"
+                inputList: [{   //  
+                    _id: "5e3b0234e389162f5835e761" //  Datapath id
                 }],
                 description: "Validar o horario da requisicao de acordo com a data passada no parametro",
                 example: "Entre 00:00 e 11:59 'bom dia' / 12:00 e 17:59 'boa tarde' / 18:00 e 23:59 'boa noite'",
                 output: {   //  retorna um obj dataPath, mas a partir do output será tratado como metadataPath
-                    metadataPathList: [{ metadataPathId: mongoose.Schema.Types.ObjectId, value: String }]  // retorna o dataPath : SIEBEL.tipoPlano
-                    // scale- outros retornos podem ser adicionados de acordo com a necessidade
+                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]  // retorna o dataPath : SIEBEL.tipoPlano
                 },
-                modeltype: "BusinessRule",   // Identificador do tipo de objeto parent (diferenciando metadataPath e dataPath)
                 expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
 
 
@@ -168,13 +165,16 @@ app.listen(3000, function () {
 
             const DataPathModel = require('./core/database/models/mongoose/DataPath')
             let DataPath = new DataPathModel({
-                path: `${req.params.datapath}`   // SYSTEM.FIELD / METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD / DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
+                integration: null,
+                endPoint: null,
+                path: `${req.params.datapath}`,   // SYSTEM.FIELD / METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD / DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
+                description: "",
             })
 
             DataPath.save()
                 .then(doc => {
                     //console.log(doc)
-                    console.log(`Parameter ${DataPath.path} salvo`)
+                    console.log(`DataPath ${DataPath.path} salvo`)
                 })
                 .catch(err => {
                     console.error(err)
@@ -191,15 +191,59 @@ app.listen(3000, function () {
 
             // CREATE TEMPLATE PLUGIN *DEVONLY*
 
-            const ParameterModel = require('./core/database/models/mongoose/Parameter')
-            let Parameter = new ParameterModel({
-                path: `${req.params.parameter}`   // SYSTEM.FIELD / METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD / DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
+            const DataPathModel = require('./core/database/models/mongoose/DataPath')
+            let DataPath = new DataPathModel({
+                path: `${req.params.parameter}`,   // SYSTEM.FIELD / METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD / DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
+                integration: '5e3afe03f4bcee04480d10fb',  //  Se possuir uma integracao, é um datapath ou parameter.
+                endpooint: '5e3afe03f4bcee04480d10fc',
+                description: ""
             })
 
-            Parameter.save()
+            DataPath.save()
                 .then(doc => {
                     //console.log(doc)
-                    console.log(`Parameter ${Parameter.path} salvo`)
+                    console.log(`Parameter ${DataPath.path} salvo`)
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+
+            res.end(``)
+
+        }),
+
+        app.get('/hub/helper/integration/:integration', (req, res) => {
+
+            let welcomeMessage = `INTEGRATION : ${req.params.integration}`
+            console.log(`[${req.session.id}] ${welcomeMessage}`)
+
+            // CREATE TEMPLATE PLUGIN *DEVONLY*
+
+            const IntegrationModel = require('./core/database/models/mongoose/Integration')
+            let Integration = new IntegrationModel({
+                name: `${req.params.integration}`,
+                shortname: 'm4u',  //  10 chars no maximo
+                description: "Integração que orquestra chamadas para M4U",
+                integrationManager: {
+                    name: "M4UManager",   // Nome da classe client manager da integração
+                    endpoints: [{
+                        name: "AdesaoControle",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        description: "Adesao"
+                    }, {
+                        name: "MigracaoControle",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        description: "Migracao"
+                    }, {
+                        name: "CadastroCartaoEldorado",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        description: "Cadastro Cartão de Crédito"
+                    }]
+                }
+
+            })
+
+            Integration.save()
+                .then(doc => {
+                    //console.log(doc)
+                    console.log(`Integration ${Integration.name} salva`)
                 })
                 .catch(err => {
                     console.error(err)

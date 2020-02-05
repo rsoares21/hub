@@ -3,8 +3,9 @@ const mongoDB_hub = require('../../mongoDB_hub')
 
 let IntegrationSchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true },
+    shortname: { type: String, unique: true, required: true },
     description: String,
-    modeltype: "Integration",    // Identificador do tipo de objeto parent (diferenciando metadataPath e dataPath)
+    //modeltype: "Integration",    // Identificador do tipo de objeto parent (diferenciando metadataPath e dataPath)
     integrationManager: {
         name: { type: String, unique: true, required: true },   // Nome da classe client manager da integração
         endpoints: [{
@@ -14,4 +15,4 @@ let IntegrationSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Integration', IntegrationSchema)
+module.exports = mongoose.model('Integrations', IntegrationSchema)
