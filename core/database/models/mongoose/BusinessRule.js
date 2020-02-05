@@ -15,7 +15,7 @@ let BusinessRuleSchema = new mongoose.Schema({
         metadataPathList: [{ metadataPathId: mongoose.Schema.Types.ObjectId, value: String }]  // retorna o dataPath : SIEBEL.tipoPlano
         // scale- outros retornos podem ser adicionados de acordo com a necessidade
     },
-    modeltype: "BusinessRule",   // Identificador do tipo de objeto parent (diferenciando metadataPath e dataPath)
+    //modeltype: "BusinessRule",   // Identificador do tipo de objeto parent (diferenciando metadataPath e dataPath)
     expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis
 
 });

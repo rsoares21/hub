@@ -98,7 +98,7 @@ app.listen(3000, function () {
                         description: String
                     }]
                 }
-    
+
             })
 
             //console.log(Dialog.name)
@@ -127,11 +127,12 @@ app.listen(3000, function () {
             let BusinessRule = new BusinessRuleModel({
 
                 channelId: "5e3a45f04f0fe914407c316a",
-                name: "Saudacao",
-                /*inputList: [{
-                    _id: mongoose.Schema.Types.ObjectId
-                }],*/
-                description: "Fazer a saudação de acordo com a hora do dia",
+                name: `${req.params.businessrule}`,
+                inputList: [{
+                    modelType: "Parameter",
+                    _id: "5e3a4e4fbb14462c44c87598"
+                }],
+                description: "Validar o horario da requisicao de acordo com a data passada no parametro",
                 example: "Entre 00:00 e 11:59 'bom dia' / 12:00 e 17:59 'boa tarde' / 18:00 e 23:59 'boa noite'",
                 output: {   //  retorna um obj dataPath, mas a partir do output será tratado como metadataPath
                     metadataPathList: [{ metadataPathId: mongoose.Schema.Types.ObjectId, value: String }]  // retorna o dataPath : SIEBEL.tipoPlano
@@ -158,6 +159,56 @@ app.listen(3000, function () {
 
         }),
 
+        app.get('/hub/helper/datapath/:datapath', (req, res) => {
+
+            let welcomeMessage = `DATAPATH : ${req.params.datapath}`
+            console.log(`[${req.session.id}] ${welcomeMessage}`)
+
+            // CREATE TEMPLATE DATAPATH *DEVONLY*
+
+            const DataPathModel = require('./core/database/models/mongoose/DataPath')
+            let DataPath = new DataPathModel({
+                path: `${req.params.datapath}`   // SYSTEM.FIELD / METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD / DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
+            })
+
+            DataPath.save()
+                .then(doc => {
+                    //console.log(doc)
+                    console.log(`Parameter ${DataPath.path} salvo`)
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+
+            res.end(``)
+
+        }),
+
+        app.get('/hub/helper/parameter/:parameter', (req, res) => {
+
+            let welcomeMessage = `PARAMETER : ${req.params.parameter}`
+            console.log(`[${req.session.id}] ${welcomeMessage}`)
+
+            // CREATE TEMPLATE PLUGIN *DEVONLY*
+
+            const ParameterModel = require('./core/database/models/mongoose/Parameter')
+            let Parameter = new ParameterModel({
+                path: `${req.params.parameter}`   // SYSTEM.FIELD / METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD / DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
+            })
+
+            Parameter.save()
+                .then(doc => {
+                    //console.log(doc)
+                    console.log(`Parameter ${Parameter.path} salvo`)
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+
+            res.end(``)
+
+        }),
+
         app.get('/hub/helper/channel/:channel', (req, res) => {
 
             let welcomeMessage = `CHANNEL : ${req.params.channel}`
@@ -169,7 +220,7 @@ app.listen(3000, function () {
             let Channel = new ChannelModel({
                 name: `${req.params.channel}`,
                 descricao: "Converte dados do Dialog para formato VXML.",
-                application:"5e3a413997ff8c3dd8fc17a4"
+                application: "5e3a413997ff8c3dd8fc17a4"
             })
 
             Channel.save()
@@ -209,7 +260,7 @@ app.listen(3000, function () {
 
             res.end(``)
 
-        }),        
+        }),
 
         app.get('/hub/dialogs/ani/:ani/:dialog', (req, res) => {
 
