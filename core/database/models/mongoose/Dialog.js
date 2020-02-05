@@ -13,8 +13,8 @@ let DialogSchema = new mongoose.Schema({
 
     plugins: [{ _id: mongoose.Schema.Types.ObjectId }],
 
-    optionsList: [{ //  
-        value: { type: String, unique: true, required: true, dropDups: true }, //  Prenchimento que será tratada Ex: "1" ou "sim"
+    optionsList: [{ //  Lista de Dialogs e options correspondentes
+        option: { type: String, required: true }, //  Prenchimento que será tratada Ex: "1" ou "sim"
         targetDialog: { _id: mongoose.Schema.Types.ObjectId },  //  Dialog destino da opção selecionada
     }], //  Opcões do Menu que formam o Dialog.
 
@@ -23,7 +23,7 @@ let DialogSchema = new mongoose.Schema({
     hubResponse: String,  // retorno principal do Dialog
     //
 
-    dialogVersion: Number,   // usado pra controle de versionamento do dialogo
+    version: Number,   // usado pra controle de versionamento do dialogo
     flagActive: Boolean,
 
     channel: mongoose.Schema.Types.ObjectId // Recebido no body do request. Vai definir qual o output sera gerado. Tratamento omni

@@ -13,8 +13,6 @@ let PluginSchema = new mongoose.Schema({
         }]
     }
 
-
-
 });
 
 module.exports = mongoose.model('Plugins', PluginSchema) 
