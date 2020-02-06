@@ -42,25 +42,34 @@ app.listen(3000, function () {
 
             const DialogModel = require('./core/database/models/mongoose/Dialog')
             let Dialog = new DialogModel({
-                application: '5e3a16973c95e10290087816',
-                name: `${req.params.dialog}`,
-                flagSubDialog: false,
+                application: '5e3a413997ff8c3dd8fc17a4',    // nome da aplicação
+                name: 'Inicio',   // Nome do dialogo/interação.
+                flagSubDialog: false, //  Caso o dialogo nao tenha menuOptionsList, será considerado um subprocesso de um Dialog
 
-                prompts: [{ _id: '5e3a16973c95e10290087816' }, { _id: '5e3a16973c95e10290087816' }],
-                optionsList: [{
-                    option: '1',
-                    _id: '5e3a1e67bd09b618fc32ffaa',
-                },
-                {
-                    option: 'sim',
-                    _id: '5e3a1e67bd09b618fc32ffaa',
+                itemsList: [{
+                    _id: '5e3bb5e7cf394850880da489',
+                    modelType: 'Prompt',  //  Prompt/BusinessRule
+                    index: 1   //  Ordem do item na contrucao do Dialog
+                }, {
+                    _id: '5e3bb5e7cf394850880da48c',
+                    modelType: 'Prompt',  //  Prompt/BusinessRule
+                    index: 2   //  Ordem do item na contrucao do Dialog
                 }],
-                hubTextResponse: 'some validated rendered text here',
 
-                version: 0.1,
-                flagActive: true,
 
-                channel: { _id: '5e3a16973c95e10290087816' }
+                //TODO Plugin GOTO Dialog
+
+                optionsList: [{ //  Lista de Dialogs e options correspondentes
+                    option: null, //  Prenchimento que será tratada Ex: "1" ou "sim"
+                    targetDialog: null,  //  Dialog destino da opção selecionada
+                }], //  Opcões do Menu que formam o Dialog.
+
+                hubResponse: String,  //  '<vxml><audio src='bomdia.wav'/></vxml>'
+
+                version: Number,   // usado pra controle de versionamento do dialogo
+                flagActive: Boolean,
+
+                channel: mongoose.Schema.Types.ObjectId // Recebido no body do request. Vai definir qual o output sera gerado. Tratamento omni
 
             })
 
@@ -87,40 +96,53 @@ app.listen(3000, function () {
 
             const PromptModel = require('./core/database/models/mongoose/Prompt')
             let Prompt = new PromptModel({
-                name: `${req.params.prompt}`,
-                contents: ['Bom dia!', 'Boa tarde!', 'Boa noite!'],    
-                filenames: ['bomdia.wav', 'boatarde.wav', 'boanoite.wav'],  
+                name: `Oi`,
+                contents: [{ value: 'Oi!' }],
+                files: [{ filename: 'oi.wav' }],
+                businessrule: null
+            })
+
+            let Prompt1 = new PromptModel({
+                name: `Saudacao`,
+                contents: [{ value: 'Bom dia!' }, { value: 'Boa tarde!' }, { value: 'Boa noite!' }],
+                files: [{ filename: 'bomdia.wav' }, { filename: 'boatarde.wav' }, { filename: 'boanoite.wav' }],
                 businessrule: '5e3b24574b1f6736dc08dadd'
             })
 
             let Prompt2 = new PromptModel({
-                name: `OfertaPosPago`,
-                contents: ['Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2.'],    
-                filenames: ['ofertaPrePagoEControle.wav'],  
+                name: `BemVindoTriagem`,
+                contents: [{ value: 'Bem vindo ao nosso Hub!' }],
+                files: [{ filename: 'welcome.wav' }],
                 businessrule: null
             })
 
             let Prompt3 = new PromptModel({
-                name: `OfertaPrePago`,
-                contents: ['Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2.'],    
-                filenames: ['ofertaPosPagoEControle.wav'],  
+                name: `OfertaPosPago`,
+                contents: [{ value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' }],
+                files: [{ filename: 'ofertaPrePagoEControle.wav' }],
                 businessrule: null
             })
 
             let Prompt4 = new PromptModel({
-                name: `OfertaControle`,
-                contents: ['Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2.'],    
-                filenames: ['ofertaPrePagoEPosPago.wav'],  
+                name: `OfertaPrePago`,
+                contents: [{ value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' }],
+                files: [{ filename: 'ofertaPosPagoEControle.wav' }],
                 businessrule: null
             })
 
             let Prompt5 = new PromptModel({
-                name: `BemVindo`,
-                contents: ['Bem vindo ao nosso Hub!'],    
-                filenames: ['welcome.wav'],  
+                name: `OfertaControle`,
+                contents: [{ value: 'Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2. Para finalizar o atendimento, digite 3.' }],
+                files: [{ filename: 'ofertaPrePagoEPosPago.wav' }],
                 businessrule: null
             })
 
+            let Prompt6 = new PromptModel({
+                name: `ObrigadoPorLigar`,
+                contents: [{ value: 'Obrigado por entrar em contato conosco. Até logo.' }],
+                files: [{ filename: 'obrigadoporligar.wav' }],
+                businessrule: null
+            })
 
             Prompt.save()
                 .then(doc => {
@@ -130,6 +152,13 @@ app.listen(3000, function () {
                 .catch(err => {
                     console.error(err)
                 })
+            Prompt1.save()
+            Prompt2.save()
+            Prompt3.save()
+            Prompt4.save()
+            Prompt5.save()
+            Prompt6.save()
+
 
             res.end(``)
 

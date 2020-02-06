@@ -11,19 +11,18 @@ let DialogSchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true, dropDups: true },   // Nome do dialogo/interação.
     flagSubDialog: Boolean, //  Caso o dialogo nao tenha menuOptionsList, será considerado um subprocesso de um Dialog
 
-    //prompts: [{ _id: mongoose.Schema.Types.ObjectId }],
-
-    body:String,    //  'Olá [:promptSaudacao:], Estamos aqui para ajudar.'
+    itemsList: [{
+        _id: mongoose.Schema.Types.ObjectId,
+        modelType: String,  //  Prompt/BusinessRule
+        index: Number   //  Ordem do item na contrucao do Dialog
+    }],
 
     optionsList: [{ //  Lista de Dialogs e options correspondentes
-        option: { type: String, required: true }, //  Prenchimento que será tratada Ex: "1" ou "sim"
-        targetDialog: { _id: mongoose.Schema.Types.ObjectId },  //  Dialog destino da opção selecionada
+        option: String, //  Prenchimento que será tratada Ex: "1" ou "sim"
+        targetDialog: mongoose.Schema.Types.ObjectId,  //  Dialog destino da opção selecionada
     }], //  Opcões do Menu que formam o Dialog.
 
-    //  OUTPUT 
-    //hubModelsResponse: [{ _id: mongoose.Schema.Types.ObjectId }], // objetos que serão retornados e transformados pelo Parser
     hubResponse: String,  // retorno principal do Dialog
-    //
 
     version: Number,   // usado pra controle de versionamento do dialogo
     flagActive: Boolean,
