@@ -11,7 +11,9 @@ let DialogSchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true, dropDups: true },   // Nome do dialogo/interação.
     flagSubDialog: Boolean, //  Caso o dialogo nao tenha menuOptionsList, será considerado um subprocesso de um Dialog
 
-    prompts: [{ _id: mongoose.Schema.Types.ObjectId }],
+    //prompts: [{ _id: mongoose.Schema.Types.ObjectId }],
+
+    body:String,    //  'Olá [:promptSaudacao:], Estamos aqui para ajudar.'
 
     optionsList: [{ //  Lista de Dialogs e options correspondentes
         option: { type: String, required: true }, //  Prenchimento que será tratada Ex: "1" ou "sim"

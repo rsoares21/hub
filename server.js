@@ -88,27 +88,37 @@ app.listen(3000, function () {
             const PromptModel = require('./core/database/models/mongoose/Prompt')
             let Prompt = new PromptModel({
                 name: `${req.params.prompt}`,
-                content:'Olá [:horaAtual:], Muito obrigado por usar nosso serviço.',
-                fragments: ['Bom dia!', 'Boa tarde!', 'Boa noite!'],    //  Conteudo dinamico em formato texto contendo tags de metadata
-                filenames: ['bomdia.wav', 'boatarde.wav', 'boanoite.wav'],  //   Possibilidades de midias retornadas
-                businessRulesList: [{ _id: '5e3b24574b1f6736dc08dadd' }], // O publisher preenche essa lista de acordo com os metadatas usados no content
-                body: ""
+                contents: ['Bom dia!', 'Boa tarde!', 'Boa noite!'],    
+                filenames: ['bomdia.wav', 'boatarde.wav', 'boanoite.wav'],  
+                businessrule: '5e3b24574b1f6736dc08dadd'
             })
 
             let Prompt2 = new PromptModel({
                 name: `OfertaPosPago`,
-                contents: ['Deseja mudar para PrePago?', 'Deseja mudar para Controle?'],    //  Conteudo dinamico em formato texto contendo tags de metadata
-                filenames: ['ofertaPrePago.wav', 'ofertaControle.wav'],  //   Possibilidades de midias retornadas
-                businessRulesList: [{ _id: '5e3b24574b1f6736dc08dadd' }], // O publisher preenche essa lista de acordo com os metadatas usados no content
-                body: ""
+                contents: ['Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2.'],    
+                filenames: ['ofertaPrePagoEControle.wav'],  
+                businessrule: null
             })
 
             let Prompt3 = new PromptModel({
+                name: `OfertaPrePago`,
+                contents: ['Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2.'],    
+                filenames: ['ofertaPosPagoEControle.wav'],  
+                businessrule: null
+            })
+
+            let Prompt4 = new PromptModel({
+                name: `OfertaControle`,
+                contents: ['Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2.'],    
+                filenames: ['ofertaPrePagoEPosPago.wav'],  
+                businessrule: null
+            })
+
+            let Prompt5 = new PromptModel({
                 name: `BemVindo`,
-                contents: ['Bem vindo ao nosso Hub!'],    //  Conteudo dinamico em formato texto contendo tags de metadata
-                filenames: ['welcome.wav'],  //   Possibilidades de midias retornadas
-                businessRulesList: [{ _id: '5e3b24574b1f6736dc08dadd' }], // O publisher preenche essa lista de acordo com os metadatas usados no content
-                body: ""
+                contents: ['Bem vindo ao nosso Hub!'],    
+                filenames: ['welcome.wav'],  
+                businessrule: null
             })
 
 
