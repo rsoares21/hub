@@ -45,6 +45,7 @@ app.listen(3000, function () {
                 application: '5e3a16973c95e10290087816',
                 name: `${req.params.dialog}`,
                 flagSubDialog: false,
+
                 prompts: [{ _id: '5e3a16973c95e10290087816' }, { _id: '5e3a16973c95e10290087816' }],
                 optionsList: [{
                     option: '1',
@@ -84,23 +85,37 @@ app.listen(3000, function () {
             let welcomeMessage = `PROMPT : ${req.params.prompt}`
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
-            const PluginModel = require('./core/database/models/mongoose/Plugin')
-            let Plugin = new PluginModel({
-                name: `${req.params.plugin}`,
-                description: 'Retrieves system Information like ip address, current_date, diskspace, etc...',
-                pluginWorker: {
-                    name: 'SystemInformation',   // Nome da classe tratadora desse plugin Ex: SiebelTranslator
-                    pluginMethods: [{
-                        name: 'getHourOfDay',   //  Nome da function no plugin Ex: isPrepago, isPosPago  fullpath={pluginWorker.pluginMethod}
-                        description: 'retorna a hora do dia em formato 24h'
-                    }]
-                }
+            const PromptModel = require('./core/database/models/mongoose/Prompt')
+            let Prompt = new PromptModel({
+                name: `${req.params.prompt}`,
+                content:'Olá [:horaAtual:], Muito obrigado por usar nosso serviço.',
+                fragments: ['Bom dia!', 'Boa tarde!', 'Boa noite!'],    //  Conteudo dinamico em formato texto contendo tags de metadata
+                filenames: ['bomdia.wav', 'boatarde.wav', 'boanoite.wav'],  //   Possibilidades de midias retornadas
+                businessRulesList: [{ _id: '5e3b24574b1f6736dc08dadd' }], // O publisher preenche essa lista de acordo com os metadatas usados no content
+                body: ""
             })
 
-            Plugin.save()
+            let Prompt2 = new PromptModel({
+                name: `OfertaPosPago`,
+                contents: ['Deseja mudar para PrePago?', 'Deseja mudar para Controle?'],    //  Conteudo dinamico em formato texto contendo tags de metadata
+                filenames: ['ofertaPrePago.wav', 'ofertaControle.wav'],  //   Possibilidades de midias retornadas
+                businessRulesList: [{ _id: '5e3b24574b1f6736dc08dadd' }], // O publisher preenche essa lista de acordo com os metadatas usados no content
+                body: ""
+            })
+
+            let Prompt3 = new PromptModel({
+                name: `BemVindo`,
+                contents: ['Bem vindo ao nosso Hub!'],    //  Conteudo dinamico em formato texto contendo tags de metadata
+                filenames: ['welcome.wav'],  //   Possibilidades de midias retornadas
+                businessRulesList: [{ _id: '5e3b24574b1f6736dc08dadd' }], // O publisher preenche essa lista de acordo com os metadatas usados no content
+                body: ""
+            })
+
+
+            Prompt.save()
                 .then(doc => {
                     //console.log(doc)
-                    console.log(`Plugin de teste ${Plugin.name} salvo`)
+                    console.log(`Prompt de teste ${Prompt.name} salvo`)
                 })
                 .catch(err => {
                     console.error(err)
@@ -153,8 +168,8 @@ app.listen(3000, function () {
 
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `${req.params.businessrule}`,
-                plugin:'5e3b1d36922477484406cc68',
-                pluginMethod:'5e3b1d36922477484406cc69',
+                plugin: '5e3b1d36922477484406cc68',
+                pluginMethod: '5e3b1d36922477484406cc69',
                 inputList: [{   //  
                     _id: "5e3b0234e389162f5835e761" //  datapath
                 }],
