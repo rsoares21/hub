@@ -56,13 +56,8 @@ app.listen(3000, function () {
                     index: 2   //  Ordem do item na contrucao do Dialog
                 }],
 
-
-                //TODO Plugin GOTO Dialog
-
-                optionsList: [{ //  Lista de Dialogs e options correspondentes
-                    option: null, //  Prenchimento que será tratada Ex: "1" ou "sim"
-                    targetDialog: null,  //  Dialog destino da opção selecionada
-                }], //  Opcões do Menu que formam o Dialog.
+                //  TODO Plugin GOTO Dialog
+                //  TODO Wait and GOTO Dialog. Jobs
 
                 hubResponse: String,  //  '<vxml><audio src='bomdia.wav'/></vxml>'
 
@@ -97,49 +92,43 @@ app.listen(3000, function () {
             const PromptModel = require('./core/database/models/mongoose/Prompt')
             let Prompt = new PromptModel({
                 name: `Oi`,
-                contents: [{ value: 'Oi!' }],
+                content: [{ value: 'Oi!' }],
                 files: [{ filename: 'oi.wav' }],
-                businessrule: null
+                businessrule: null,
             })
 
             let Prompt1 = new PromptModel({
                 name: `Saudacao`,
-                contents: [{ value: 'Bom dia!' }, { value: 'Boa tarde!' }, { value: 'Boa noite!' }],
+                content: [{ value: 'Bom dia!' }, { value: 'Boa tarde!' }, { value: 'Boa noite!' }],
                 files: [{ filename: 'bomdia.wav' }, { filename: 'boatarde.wav' }, { filename: 'boanoite.wav' }],
-                businessrule: '5e3b24574b1f6736dc08dadd'
+                businessrule: '5e3b24574b1f6736dc08dadd',
             })
 
             let Prompt2 = new PromptModel({
-                name: `BemVindoTriagem`,
-                contents: [{ value: 'Bem vindo ao nosso Hub!' }],
-                files: [{ filename: 'welcome.wav' }],
-                businessrule: null
+                name: `MenuOfertas`,
+                content: [
+                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
+                    { value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
+                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2. Para finalizar o atendimento, digite 3.' }
+                ],
+                files: [{ filename: 'ofertaPrePagoEControle.wav' }, { filename: 'ofertaPosPagoEControle.wav' }, { filename: 'ofertaPrePagoEPosPago.wav' }],
+                businessrule: '5e3cb7960d3c1e0290cb79df',
+                options: [{ //  Lista de Dialogs e options correspondentes
+                    option: '1', //  Prenchimento que será tratada Ex: "1" ou "sim"
+                    targetDialog: null,
+                }], //  Opcões do Menu que formam o Dialog.                
             })
 
             let Prompt3 = new PromptModel({
-                name: `OfertaPosPago`,
-                contents: [{ value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' }],
-                files: [{ filename: 'ofertaPrePagoEControle.wav' }],
-                businessrule: null
+                name: `BemVindoTriagem`,
+                content: [{ value: 'Bem vindo ao nosso Hub!' }],
+                files: [{ filename: 'welcome.wav' }],
+                businessrule: null,
             })
 
             let Prompt4 = new PromptModel({
-                name: `OfertaPrePago`,
-                contents: [{ value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' }],
-                files: [{ filename: 'ofertaPosPagoEControle.wav' }],
-                businessrule: null
-            })
-
-            let Prompt5 = new PromptModel({
-                name: `OfertaControle`,
-                contents: [{ value: 'Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2. Para finalizar o atendimento, digite 3.' }],
-                files: [{ filename: 'ofertaPrePagoEPosPago.wav' }],
-                businessrule: null
-            })
-
-            let Prompt6 = new PromptModel({
                 name: `ObrigadoPorLigar`,
-                contents: [{ value: 'Obrigado por entrar em contato conosco. Até logo.' }],
+                content: [{ value: 'Obrigado por entrar em contato conosco. Até logo.' }],
                 files: [{ filename: 'obrigadoporligar.wav' }],
                 businessrule: null
             })
@@ -156,8 +145,6 @@ app.listen(3000, function () {
             Prompt2.save()
             Prompt3.save()
             Prompt4.save()
-            Prompt5.save()
-            Prompt6.save()
 
 
             res.end(``)
