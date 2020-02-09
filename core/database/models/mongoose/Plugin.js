@@ -4,7 +4,6 @@ const mongoDB_hub = require('../../mongoDB_hub')
 let PluginSchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true },
     description: String,
-    //businessRulesList: [{ _id: mongoose.Schema.Types.ObjectId }],
     pluginWorker: {
         name: { type: String, unique: true, required: true },   // Nome da classe tratadora desse plugin Ex: SiebelTranslator
         pluginMethods: [{

@@ -7,27 +7,21 @@ const mongoDB_hub = require('../../mongoDB_hub')
 
 let DialogSchema = new mongoose.Schema({
 
-    application: mongoose.Schema.Types.ObjectId,    // nome da aplicação
     name: { type: String, unique: true, required: true, dropDups: true },   // Nome do dialogo/interação.
-    flagSubDialog: Boolean, //  Caso o dialogo nao tenha menuOptionsList, será considerado um subprocesso de um Dialog
+    application: mongoose.Schema.Types.ObjectId,    // nome da aplicação
+    channel: mongoose.Schema.Types.ObjectId, // Recebido no body do request. Vai definir qual o output sera gerado. Tratamento omni
 
     itemsList: [{
-        _id: mongoose.Schema.Types.ObjectId,
+        modelId: mongoose.Schema.Types.ObjectId,
         modelType: String,  //  Prompt/BusinessRule
         index: Number   //  Ordem do item na contrucao do Dialog
     }],
 
-    optionsList: [{ //  Lista de Dialogs e options correspondentes
-        option: String, //  Prenchimento que será tratada Ex: "1" ou "sim"
-        targetDialog: mongoose.Schema.Types.ObjectId,  //  Dialog destino da opção selecionada
-    }], //  Opcões do Menu que formam o Dialog.
-
-    hubResponse: String,  // retorno principal do Dialog
+    hubResponse: String,  // retorno principal do Dialog formatado pelo Parser de acordo com o Channel
 
     version: Number,   // usado pra controle de versionamento do dialogo
-    flagActive: Boolean,
-
-    channel: mongoose.Schema.Types.ObjectId // Recebido no body do request. Vai definir qual o output sera gerado. Tratamento omni
+    active: Boolean,
+    process: Boolean, //  Caso o dialogo nao tenha nenhum prompt com option, será considerado um processo
 
 });
 

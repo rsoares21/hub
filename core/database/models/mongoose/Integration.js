@@ -5,12 +5,12 @@ let IntegrationSchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true },
     shortname: { type: String, unique: true, required: true },
     description: String,
-    //modeltype: "Integration",    // Identificador do tipo de objeto parent (diferenciando metadataPath e dataPath)
     integrationManager: {
         name: { type: String, unique: true, required: true },   // Nome da classe client manager da integração
         endpoints: [{
             name: { type: String, unique: true, required: true },   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-            description: String
+            description: String,
+            paths: [{ value: String }]
         }]
     }
 });

@@ -42,31 +42,67 @@ app.listen(3000, function () {
 
             const DialogModel = require('./core/database/models/mongoose/Dialog')
             let Dialog = new DialogModel({
-                application: '5e3a413997ff8c3dd8fc17a4',    // nome da aplicação
-                name: 'Inicio',   // Nome do dialogo/interação.
-                flagSubDialog: false, //  Caso o dialogo nao tenha menuOptionsList, será considerado um subprocesso de um Dialog
 
-                itemsList: [{
-                    _id: '5e3bb5e7cf394850880da489',
-                    modelType: 'Prompt',  //  Prompt/BusinessRule
-                    index: 1   //  Ordem do item na contrucao do Dialog
-                }, {
-                    _id: '5e3bb5e7cf394850880da48c',
-                    modelType: 'Prompt',  //  Prompt/BusinessRule
-                    index: 2   //  Ordem do item na contrucao do Dialog
-                }],
+                name: 'Welcome',
+                application: '5e3a413997ff8c3dd8fc17a4',
+                channel: '5e3a45f04f0fe914407c316a',
 
-                //  TODO Plugin GOTO Dialog
-                //  TODO Wait and GOTO Dialog. Jobs
+                itemsList: [
+                    { modelId: "5e3debc97cedaf26245a368f", modelType: "prompt", index: 1 },
+                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "plugin", index: 2 }],
 
-                hubResponse: String,  //  '<vxml><audio src='bomdia.wav'/></vxml>'
-
-                version: Number,   // usado pra controle de versionamento do dialogo
-                flagActive: Boolean,
-
-                channel: mongoose.Schema.Types.ObjectId // Recebido no body do request. Vai definir qual o output sera gerado. Tratamento omni
+                version: 0.1,
+                active: true,
+                process: false,
 
             })
+
+            let Dialog2 = new DialogModel({
+
+                name: 'MenuTriagem',
+                application: '5e3a413997ff8c3dd8fc17a4', 
+                channel: '5e3a45f04f0fe914407c316a',
+
+                itemsList: [
+                    { modelId: "5e3e02560d3c1e0290cb79e2", modelType: "prompt", index: 1 }],
+
+                version: 0.1,
+                active: true,
+                process: false,
+
+            })
+
+
+            let Dialog3 = new DialogModel({
+
+                name: 'MenuOfertas',
+                application: '5e3a413997ff8c3dd8fc17a4',
+                channel: '5e3a45f04f0fe914407c316a',
+
+                itemsList: [
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "prompt", index: 1 }],
+
+                version: 0.1,
+                active: true,
+                process: false,
+
+            })
+
+            let Dialog4 = new DialogModel({
+
+                name: 'AlteraPlanoCelular',
+                application: '5e3a413997ff8c3dd8fc17a4',
+                channel: '5e3a45f04f0fe914407c316a',
+
+                itemsList: [
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "integration", index: 1 }],
+
+                version: 0.1,
+                active: true,
+                process: false,
+
+            })
+
 
 
             //console.log(Dialog.name)
@@ -79,6 +115,8 @@ app.listen(3000, function () {
                 .catch(err => {
                     console.error(err)
                 })
+            Dialog2.save()
+            Dialog3.save()
 
             res.end(``)
 
@@ -93,8 +131,7 @@ app.listen(3000, function () {
             let Prompt = new PromptModel({
                 name: `Oi`,
                 content: [{ value: 'Oi!' }],
-                files: [{ filename: 'oi.wav' }],
-                businessrule: null,
+                files: [{ filename: 'oi.wav' }]
             })
 
             let Prompt1 = new PromptModel({
@@ -105,7 +142,7 @@ app.listen(3000, function () {
             })
 
             let Prompt2 = new PromptModel({
-                name: `MenuOfertas`,
+                name: `MenuOfertasDinamico`,
                 content: [
                     { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
                     { value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
@@ -113,24 +150,23 @@ app.listen(3000, function () {
                 ],
                 files: [{ filename: 'ofertaPrePagoEControle.wav' }, { filename: 'ofertaPosPagoEControle.wav' }, { filename: 'ofertaPrePagoEPosPago.wav' }],
                 businessrule: '5e3cb7960d3c1e0290cb79df',
-                options: [{ //  Lista de Dialogs e options correspondentes
-                    option: '1', //  Prenchimento que será tratada Ex: "1" ou "sim"
-                    targetDialog: null,
-                }], //  Opcões do Menu que formam o Dialog.                
+                options: [
+                    [{ value: '1', dialog: null }, { value: '2', dialog: null }, { value: '3', dialog: null }],
+                    [{ value: '1', dialog: null }, { value: '2', dialog: null }, { value: '3', dialog: null }],
+                    [{ value: '1', dialog: null }, { value: '2', dialog: null }, { value: '3', dialog: null }]
+                ]
             })
 
             let Prompt3 = new PromptModel({
                 name: `BemVindoTriagem`,
                 content: [{ value: 'Bem vindo ao nosso Hub!' }],
-                files: [{ filename: 'welcome.wav' }],
-                businessrule: null,
+                files: [{ filename: 'welcome.wav' }]
             })
 
             let Prompt4 = new PromptModel({
                 name: `ObrigadoPorLigar`,
                 content: [{ value: 'Obrigado por entrar em contato conosco. Até logo.' }],
-                files: [{ filename: 'obrigadoporligar.wav' }],
-                businessrule: null
+                files: [{ filename: 'obrigadoporligar.wav' }]
             })
 
             Prompt.save()
@@ -158,13 +194,23 @@ app.listen(3000, function () {
 
             const PluginModel = require('./core/database/models/mongoose/Plugin')
             let Plugin = new PluginModel({
-                name: `${req.params.plugin}`,
-                description: 'Retrieves system Information like ip address, current_date, diskspace, etc...',
+                name: `Saudacao_VXML`,
+                description: 'Saudacoes',
                 pluginWorker: {
-                    name: 'SystemInformation',   // Nome da classe tratadora desse plugin Ex: SiebelTranslator
+                    name: 'Saudacao',
+                    pluginMethods: [
+                        { name: 'saudacaoInicial', description: 'Retorna os prompts de bom dia, boa tarde ou boa noite e de acordo com o horario do dia passado via parametro' }]
+                }
+            })
+
+            let Plugin2 = new PluginModel({
+                name: `Goto_VXML`,
+                description: 'Gera um apontamento vxml para um outro Dialog <goto next="%HUB%/dialogs/BlackHole"/>',
+                pluginWorker: {
+                    name: 'GotoVXML',
                     pluginMethods: [{
-                        name: 'getHourOfDay',   //  Nome da function no plugin Ex: isPrepago, isPosPago  fullpath={pluginWorker.pluginMethod}
-                        description: 'retorna a hora do dia em formato 24h'
+                        name: 'gotoDialog',
+                        description: 'Retorna uma tag vxml goto apontando para outro Dialog.'
                     }]
                 }
             })
@@ -177,6 +223,8 @@ app.listen(3000, function () {
                 .catch(err => {
                     console.error(err)
                 })
+
+            Plugin2.save()
 
             res.end(``)
 
@@ -193,19 +241,84 @@ app.listen(3000, function () {
             let BusinessRule = new BusinessRuleModel({
 
                 channelId: "5e3a45f04f0fe914407c316a",
-                name: `${req.params.businessrule}`,
-                plugin: '5e3b1d36922477484406cc68',
-                pluginMethod: '5e3b1d36922477484406cc69',
-                inputList: [{   //  
-                    _id: "5e3b0234e389162f5835e761" //  datapath
+                name: `Saudacao`,
+                type: 'plugin',
+                class: '5e3b25b55aa36d112c208b25',
+                method: '5e3b1d36922477484406cc69',
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',
+                    modeltype: 'parameter'
                 }],
+
                 description: "Validar o horario da requisicao de acordo com a data passada no parametro",
-                example: "Entre 00:00 e 11:59 'bom dia' / 12:00 e 17:59 'boa tarde' / 18:00 e 23:59 'boa noite'",
+                example: "Entre 00:00 e 11:59 'bomdia.wav' / 12:00 e 17:59 'boatarde.wav' / 18:00 e 23:59 'boanoite.wav'",
+                /*output: {
+                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]
+                },*/
+                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
+
+            })
+
+            let BusinessRule2 = new BusinessRuleModel({
+
+                channelId: "5e3a45f04f0fe914407c316a",
+                name: `MenuOfertas`,
+                type: 'plugin',
+                class: '5e3b25b55aa36d112c208b25',
+                method: '5e3b1d36922477484406cc69',
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',
+                    modeltype: 'datapath'
+                }],
+
+                description: "Ofertar mudanca de planos diferentes do que o cliente ja possui.",
+                example: "Se cliente = PRE ofertar POS e COTROLE (ofertaPosPagoEControle.wav); Se cliente = POS ofertar PRE e CONTROLE (ofertaPrePagoEControle.wav); Se cliete = CONTROLE ofertar PRE e POS (ofertaPrePagoEPosPago.wav).",
+                /*output: {
+                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]
+                },*/
+                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
+
+            })
+
+            let BusinessRule3 = new BusinessRuleModel({
+
+                channelId: "5e3a45f04f0fe914407c316a",
+                name: `Goto`,
+                type: 'plugin',
+                class: '5e3b25b55aa36d112c208b25',
+                method: '5e3b1d36922477484406cc69',
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',
+                    modeltype: 'dialog'
+                }],
+
+                description: "Criar um redirecionamento para outro Dialog.",
+                example: "Redirecionando para dialog Triagem",
+                /*output: {
+                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]
+                },*/
+                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
+
+            })
+
+            let BusinessRule4 = new BusinessRuleModel({
+
+                channelId: "5e3a45f04f0fe914407c316a",
+                name: `AlteraPlanoCelular`,
+                type: 'integration',
+                class: '5e3b25b55aa36d112c208b25',
+                method: '5e3b1d36922477484406cc69',
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',
+                    modeltype: 'datapath'
+                }],
+
+                description: "Usar o datapath referido e chamar a integracao de alteracao de planos",
+                example: "Cliente Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação.",
                 output: {
                     metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]
                 },
                 expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
-
 
             })
 
@@ -220,6 +333,11 @@ app.listen(3000, function () {
                     console.error(err)
                 })
 
+            BusinessRule2.save()
+            BusinessRule3.save()
+            BusinessRule4.save()
+
+
             res.end(``)
 
         }),
@@ -229,14 +347,12 @@ app.listen(3000, function () {
             let welcomeMessage = `DATAPATH : ${req.params.datapath}`
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
-            // CREATE TEMPLATE DATAPATH *DEVONLY*
-
             const DataPathModel = require('./core/database/models/mongoose/DataPath')
             let DataPath = new DataPathModel({
-                integration: null,
-                endPoint: null,
-                path: `${req.params.datapath}`,   // SYSTEM.FIELD / METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD / DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
-                description: "",
+                integration: '5e3b138185e02b46b82cec6f',
+                endPoint: '5e3b138185e02b46b82cec6f',
+                path: `5e3b138185e02b46b82cec6f`,
+                description: "Tipo de plano do cliente PRE, POS ou CONTROLE",
             })
 
             DataPath.save()
@@ -285,28 +401,50 @@ app.listen(3000, function () {
             let welcomeMessage = `INTEGRATION : ${req.params.integration}`
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
-            // CREATE TEMPLATE PLUGIN *DEVONLY*
-
             const IntegrationModel = require('./core/database/models/mongoose/Integration')
             let Integration = new IntegrationModel({
-                name: `${req.params.integration}`,
-                shortname: 'm4u',  //  10 chars no maximo
-                description: "Integração que orquestra chamadas para M4U",
+                name: `Siebel`,
+                shortname: 'ALTPLAN',  //  10 chars no maximo
+                description: "Integração que solicita a alteração do plano de celular",
                 integrationManager: {
-                    name: "M4UManager",   // Nome da classe client manager da integração
+                    name: "Siebel",   // Nome da classe client manager da integração
                     endpoints: [{
-                        name: "AdesaoControle",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-                        description: "Adesao"
+                        name: "ObterTip+oPlanoCelular",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        description: "Retorna o tipo de plano de celular do usuario. Ex: POS, PRE CONTROLE",
+                        paths: [{ value: 'TipoPlanoCelular' }]
+                    },
+                    {
+                        name: "AlteraPlanoPre",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        description: "Mudança de plano para Pré Pago. Retorna Result e Msg.",
+                        paths: [{ value: 'AlteraPlanoPreResult' }, { value: 'AlteraPlanoPreMsg' }]
                     }, {
-                        name: "MigracaoControle",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-                        description: "Migracao"
+                        name: "AlteraPlanoPos",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        description: "Mudança de plano para Pós Pago. Retorna Result e Msg.",
+                        paths: [{ value: 'AlteraPlanoPosResult' }, { value: 'AlteraPlanoPosMsg' }]
                     }, {
-                        name: "CadastroCartaoEldorado",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-                        description: "Cadastro Cartão de Crédito"
+                        name: "AlteraPlanoControle",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        description: "Mudança de plano para Controle. Retorna Result e Msg.",
+                        paths: [{ value: 'AlteraPlanoControleResult' }, { value: 'AlteraPlanoControleMsg' }]
+                    }]
+                }
+            })
+
+            let Integration2 = new IntegrationModel({
+                name: `Parametros`,
+                shortname: 'PARAMS',  //  10 chars no maximo
+                description: "Integração de Parametros gerais da aplicação",
+                integrationManager: {
+                    name: "Parametros",   // Nome da classe client manager da integração
+                    endpoints: [{
+                        name: "ObterParametro",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        description: "Retorna valor do parametro requisitado",
+                        paths: [{ value: 'dataHoje' }, { value: 'dataPromocao' }]
                     }]
                 }
 
             })
+
+
 
             Integration.save()
                 .then(doc => {
@@ -317,6 +455,7 @@ app.listen(3000, function () {
                     console.error(err)
                 })
 
+            Integration2.save()
             res.end(``)
 
         }),
