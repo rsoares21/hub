@@ -305,7 +305,9 @@ app.listen(3000, function () {
                 }],
 
                 description: "Alterar o plano do cliente de acordo com a opcao selecionada no MenuOfertas 'PRE', 'POS' e 'CONTROLE' respectivamente.",
-                example:    "Cliente Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. O opcao selecionada sera recebida dinamicamente.",
+                example: "Cliente Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. " +
+                    "A opcao selecionada sera recebida via queryParameter. Opções : " +
+                    "PRE / POS / CONTROLE",
                 output: {
                     dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  Siebel.user.TipoPlanoCelular
                 },
@@ -340,11 +342,50 @@ app.listen(3000, function () {
 
             const DataPathModel = require('./core/database/models/mongoose/DataPath')
             let DataPath = new DataPathModel({
-                integration: '5e3b138185e02b46b82cec6f',
-                endPoint: '5e3b138185e02b46b82cec6f',
-                path: `5e3b138185e02b46b82cec6f`,
+                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
+                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
+                path: `user.TIPO_PLANO_CELULAR`,
                 description: "Tipo de plano do cliente PRE, POS ou CONTROLE",
             })
+
+            let DataPath1 = new DataPathModel({
+                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
+                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
+                path: `user.NUMERO_CELULAR`,
+                description: "Numero do celular principal do usuário.",
+            })
+
+            let DataPath2 = new DataPathModel({
+                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
+                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
+                path: `metadata.AlteraPlanoPreResultCode`,
+                description: "Codigp de retorno da solicitacao de mudança de plano do MenuOfertas.",
+            })
+
+            let DataPath3 = new DataPathModel({
+                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
+                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
+                path: `metadata.AlteraPlanoPreResultMsg`,
+                description: "Mensagem de retorno da solicitacao de mudança de plano do MenuOfertas.",
+            })
+
+            let DataPath4 = new DataPathModel({
+                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
+                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
+                path: `param.dataHoje`,
+                description: "Parametro que simula uma data diferente da atual",
+                paramValue:'01/01/2021'
+            })
+
+            let DataPath5 = new DataPathModel({
+                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
+                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
+                path: `param.dataPromocao`,
+                description: "Data inicial da Promocao",
+                paramValue:'01/02/2021'
+            })
+
+
 
             DataPath.save()
                 .then(doc => {
@@ -355,6 +396,12 @@ app.listen(3000, function () {
                     console.error(err)
                 })
 
+            DataPath1.save()
+            DataPath2.save()
+            DataPath3.save()
+            DataPath4.save()
+            DataPath5.save()
+
             res.end(``)
 
         }),
@@ -364,25 +411,30 @@ app.listen(3000, function () {
             let welcomeMessage = `PARAMETER : ${req.params.parameter}`
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
-            // CREATE TEMPLATE PLUGIN *DEVONLY*
-
-            const DataPathModel = require('./core/database/models/mongoose/DataPath')
-            let DataPath = new DataPathModel({
-                path: `${req.params.parameter}`,   // SYSTEM.FIELD / METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD / DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
-                integration: '5e3afe03f4bcee04480d10fb',  //  Se possuir uma integracao, é um datapath ou parameter.
-                endpooint: '5e3afe03f4bcee04480d10fc',
-                description: ""
+            const ParameterModel = require('./core/database/models/mongoose/DataPath')
+            let Parameter = new ParameterModel({
+                name: 'dataHoje',
+                description: 'Data usada para simulação',
+                value: '01/06/2020'
             })
 
-            DataPath.save()
+            let Parameter1 = new ParameterModel({
+                name: 'dataPromocao',
+                description: 'Data de inicio da Promoção',
+                value: '01/07/2020'
+            })
+
+
+            Parameter.save()
                 .then(doc => {
                     //console.log(doc)
-                    console.log(`Parameter ${DataPath.path} salvo`)
+                    console.log(`Parameter ${Parameter.name} salvo`)
                 })
                 .catch(err => {
                     console.error(err)
                 })
 
+            Parameter1.save()
             res.end(``)
 
         }),
@@ -395,41 +447,23 @@ app.listen(3000, function () {
             const IntegrationModel = require('./core/database/models/mongoose/Integration')
             let Integration = new IntegrationModel({
                 name: `Siebel`,
-                shortname: 'ALTPLAN',  //  10 chars no maximo
+                shortname: 'altplan',  //  10 chars no maximo
                 description: "Integração que gerencia os planos de celular",
                 integrationManager: {
                     name: "Siebel",   // Nome da classe client manager da integração
                     endpoints: [{
                         name: "ObterTipoPlanoCelular",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
                         description: "Retorna o tipo de plano de celular do usuario. Ex: POS, PRE CONTROLE",
-                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }], // Siebel.user.TipoPlanoCelular
-                        metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }] // metadata.user.tipoPlanoCelular
-                    },
-                    {
-                        name: "AlteraPlanoCelular",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-                        description: "Mudança de plano para Pré Pago, Pós Pago ou Controle. Requer uma option 'PLANO', selecionada no MenuOfertas. Retorna ResultCode e ResultMsg.",
-                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }], // Siebel.user.numeroCelular
-                        metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }, { _id: '5e3afe03f4bcee04480d10fc' }] // AlteraPlanoPreResult, AlteraPlanoPreMsg
+                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }] // Siebel.user.TipoPlanoCelular
+                        //metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }] 
+                    }, {
+                        name: "AlteraPlanoCelular",
+                        description: "Solicita alteração de plano para Pré Pago, Pós Pago ou Controle. Requer uma option PLANO=PRE/POS/CONTROLE, selecionada no MenuOfertas. Retorna ResultCode e ResultMsg.",
+                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }], // Siebel.user.numeroCelular para solicitar a mudança no plano
+                        metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }, { _id: '5e3afe03f4bcee04480d10fc' }] // AlteraPlanoPreResultCode, AlteraPlanoPreResultMsg
                     }]
                 }
             })
-
-            let Integration2 = new IntegrationModel({
-                name: `Parametros`,
-                shortname: 'PARAMS',  //  10 chars no maximo
-                description: "Integração de Parametros gerais da aplicação",
-                integrationManager: {
-                    name: "Parametros",   // Nome da classe client manager da integração
-                    endpoints: [{
-                        name: "ObterParametro",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-                        description: "Retorna valor do parametro requisitado",
-                        paths: [{ value: 'dataHoje' }, { value: 'dataPromocao' }]
-                    }]
-                }
-
-            })
-
-
 
             Integration.save()
                 .then(doc => {

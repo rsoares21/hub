@@ -5,7 +5,8 @@ let DataPathSchema = new mongoose.Schema({
     path: { type: String, unique: true, required: true },   // METADATA.{USER}.<{BRuleName}.{PluginName}.{PluginMethod}>.FIELD / DATA.<{IntegrationName}.{IntegrationEndpoint}>.FIELD
     integration: mongoose.Schema.Types.ObjectId,
     endPoint: mongoose.Schema.Types.ObjectId,
-    description: String
+    description: String,
+    paramValue: String  //  Caso o campo seja um parametro
     //modelType: String
 
 });
