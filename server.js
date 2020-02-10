@@ -169,6 +169,12 @@ app.listen(3000, function () {
                 files: [{ filename: 'obrigadoporligar.wav' }]
             })
 
+            let Prompt5 = new PromptModel({
+                name: `MenuTriagem`,
+                content: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
+                files: [{ filename: 'MenuTrigem.wav' }]
+            })
+
             Prompt.save()
                 .then(doc => {
                     //console.log(doc)
@@ -181,6 +187,7 @@ app.listen(3000, function () {
             Prompt2.save()
             Prompt3.save()
             Prompt4.save()
+            Prompt5.save()
 
 
             res.end(``)
