@@ -10,7 +10,9 @@ let IntegrationSchema = new mongoose.Schema({
         endpoints: [{
             name: { type: String, unique: true, required: true },   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
             description: String,
-            paths: [{ value: String }]
+            datapaths: [{ _id: mongoose.Schema.Types.ObjectId }], // Siebel.user.numeroCelular
+            metadata: [{ _id: mongoose.Schema.Types.ObjectId }, { value: '5e3afe03f4bcee04480d10fc' }] // AlteraPlanoControleResult, AlteraPlanoControleMsg
+
         }]
     }
 });

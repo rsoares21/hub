@@ -60,7 +60,7 @@ app.listen(3000, function () {
             let Dialog2 = new DialogModel({
 
                 name: 'MenuTriagem',
-                application: '5e3a413997ff8c3dd8fc17a4', 
+                application: '5e3a413997ff8c3dd8fc17a4',
                 channel: '5e3a45f04f0fe914407c316a',
 
                 itemsList: [
@@ -142,7 +142,7 @@ app.listen(3000, function () {
             })
 
             let Prompt2 = new PromptModel({
-                name: `MenuOfertasDinamico`,
+                name: `MenuOfertas`,
                 content: [
                     { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
                     { value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
@@ -252,10 +252,7 @@ app.listen(3000, function () {
 
                 description: "Validar o horario da requisicao de acordo com a data passada no parametro",
                 example: "Entre 00:00 e 11:59 'bomdia.wav' / 12:00 e 17:59 'boatarde.wav' / 18:00 e 23:59 'boanoite.wav'",
-                /*output: {
-                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]
-                },*/
-                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
+                expiration: 1000
 
             })
 
@@ -273,10 +270,7 @@ app.listen(3000, function () {
 
                 description: "Ofertar mudanca de planos diferentes do que o cliente ja possui.",
                 example: "Se cliente = PRE ofertar POS e COTROLE (ofertaPosPagoEControle.wav); Se cliente = POS ofertar PRE e CONTROLE (ofertaPrePagoEControle.wav); Se cliete = CONTROLE ofertar PRE e POS (ofertaPrePagoEPosPago.wav).",
-                /*output: {
-                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]
-                },*/
-                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
+                expiration: 1000
 
             })
 
@@ -294,10 +288,7 @@ app.listen(3000, function () {
 
                 description: "Criar um redirecionamento para outro Dialog.",
                 example: "Redirecionando para dialog Triagem",
-                /*output: {
-                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]
-                },*/
-                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
+                expiration: 1000
 
             })
 
@@ -309,14 +300,14 @@ app.listen(3000, function () {
                 class: '5e3b25b55aa36d112c208b25',
                 method: '5e3b1d36922477484406cc69',
                 inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',
+                    modelId: '5e3b0234e389162f5835e761',    //  Siebel.user.numeroCelular
                     modeltype: 'datapath'
                 }],
 
-                description: "Usar o datapath referido e chamar a integracao de alteracao de planos",
-                example: "Cliente Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação.",
+                description: "Alterar o plano do cliente de acordo com a opcao selecionada no MenuOfertas 'PRE', 'POS' e 'CONTROLE' respectivamente.",
+                example:    "Cliente Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. O opcao selecionada sera recebida dinamicamente.",
                 output: {
-                    metadataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }]
+                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  Siebel.user.TipoPlanoCelular
                 },
                 expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
 
@@ -405,26 +396,20 @@ app.listen(3000, function () {
             let Integration = new IntegrationModel({
                 name: `Siebel`,
                 shortname: 'ALTPLAN',  //  10 chars no maximo
-                description: "Integração que solicita a alteração do plano de celular",
+                description: "Integração que gerencia os planos de celular",
                 integrationManager: {
                     name: "Siebel",   // Nome da classe client manager da integração
                     endpoints: [{
-                        name: "ObterTip+oPlanoCelular",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        name: "ObterTipoPlanoCelular",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
                         description: "Retorna o tipo de plano de celular do usuario. Ex: POS, PRE CONTROLE",
-                        paths: [{ value: 'TipoPlanoCelular' }]
+                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }], // Siebel.user.TipoPlanoCelular
+                        metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }] // metadata.user.tipoPlanoCelular
                     },
                     {
-                        name: "AlteraPlanoPre",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-                        description: "Mudança de plano para Pré Pago. Retorna Result e Msg.",
-                        paths: [{ value: 'AlteraPlanoPreResult' }, { value: 'AlteraPlanoPreMsg' }]
-                    }, {
-                        name: "AlteraPlanoPos",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-                        description: "Mudança de plano para Pós Pago. Retorna Result e Msg.",
-                        paths: [{ value: 'AlteraPlanoPosResult' }, { value: 'AlteraPlanoPosMsg' }]
-                    }, {
-                        name: "AlteraPlanoControle",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-                        description: "Mudança de plano para Controle. Retorna Result e Msg.",
-                        paths: [{ value: 'AlteraPlanoControleResult' }, { value: 'AlteraPlanoControleMsg' }]
+                        name: "AlteraPlanoCelular",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
+                        description: "Mudança de plano para Pré Pago, Pós Pago ou Controle. Requer uma option 'PLANO', selecionada no MenuOfertas. Retorna ResultCode e ResultMsg.",
+                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }], // Siebel.user.numeroCelular
+                        metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }, { _id: '5e3afe03f4bcee04480d10fc' }] // AlteraPlanoPreResult, AlteraPlanoPreMsg
                     }]
                 }
             })

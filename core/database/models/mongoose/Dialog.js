@@ -10,6 +10,7 @@ let DialogSchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true, dropDups: true },   // Nome do dialogo/interação.
     application: mongoose.Schema.Types.ObjectId,    // nome da aplicação
     channel: mongoose.Schema.Types.ObjectId, // Recebido no body do request. Vai definir qual o output sera gerado. Tratamento omni
+    userRequest: String,    //  Recebe qualquer tipo de informacao em json e repassa para a integracao/plugin
 
     itemsList: [{
         modelId: mongoose.Schema.Types.ObjectId,
