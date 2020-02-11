@@ -9,6 +9,7 @@ let PromptSchema = new mongoose.Schema({
     options: [[{
             value: String, //  Prenchimento que será tratada Ex: "1" ou "sim"
             dialog: mongoose.Schema.Types.ObjectId,  //  Dialog ou Processo destino da opção selecionada
+            queryString:String
     }]]
 });
 

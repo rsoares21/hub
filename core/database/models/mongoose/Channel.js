@@ -13,4 +13,4 @@ let ChannelSchema = new mongoose.Schema({
     application: mongoose.Schema.Types.ObjectId
 });
 
-module.exports = mongoose.model('Channel', ChannelSchema)
+module.exports = mongoose.model('Channels', ChannelSchema)

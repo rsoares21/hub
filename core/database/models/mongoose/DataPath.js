@@ -11,4 +11,4 @@ let DataPathSchema = new mongoose.Schema({
 
 });
 
-module.exports = mongoose.model('DataPath', DataPathSchema)
+module.exports = mongoose.model('DataPaths', DataPathSchema)

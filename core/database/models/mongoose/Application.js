@@ -8,4 +8,4 @@ let ApplicationSchema = new mongoose.Schema({
     descricao: { type: String, required: true }
 });
 
-module.exports = mongoose.model('Application', ApplicationSchema)
+module.exports = mongoose.model('Applications', ApplicationSchema)

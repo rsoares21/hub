@@ -72,7 +72,6 @@ app.listen(3000, function () {
 
             })
 
-
             let Dialog3 = new DialogModel({
 
                 name: 'MenuOfertas',
@@ -102,8 +101,6 @@ app.listen(3000, function () {
                 process: false,
 
             })
-
-
 
             //console.log(Dialog.name)
 
@@ -151,9 +148,9 @@ app.listen(3000, function () {
                 files: [{ filename: 'ofertaPrePagoEControle.wav' }, { filename: 'ofertaPosPagoEControle.wav' }, { filename: 'ofertaPrePagoEPosPago.wav' }],
                 businessrule: '5e3cb7960d3c1e0290cb79df',
                 options: [
-                    [{ value: '1', dialog: null }, { value: '2', dialog: null }, { value: '3', dialog: null }],
-                    [{ value: '1', dialog: null }, { value: '2', dialog: null }, { value: '3', dialog: null }],
-                    [{ value: '1', dialog: null }, { value: '2', dialog: null }, { value: '3', dialog: null }]
+                    [{ value: '1', dialog: null, queryString:'PRE' }, { value: '2', dialog: null, queryString:'CONTROLE' }, { value: '3', dialog: null, queryString:null }],
+                    [{ value: '1', dialog: null, queryString:'POS' }, { value: '2', dialog: null, queryString:'CONTROLE' }, { value: '3', dialog: null, queryString:null }],
+                    [{ value: '1', dialog: null, queryString:'PRE' }, { value: '2', dialog: null, queryString:'POS' }, { value: '3', dialog: null, queryString:null }]
                 ]
             })
 
