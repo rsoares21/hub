@@ -284,6 +284,30 @@ app.listen(3000, function () {
             let BusinessRule3 = new BusinessRuleModel({
 
                 channelId: "5e3a45f04f0fe914407c316a",
+                name: `AlteraPlanoCelular`,
+                type: 'integration',
+                class: '5e3b25b55aa36d112c208b25',
+                method: '5e3b1d36922477484406cc69',
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',    // Siebel.user.numeroCelular para solicitar a mudança no plano
+                    modeltype: 'datapath'
+                }],
+
+                description:    "Altera o plano do cliente de acordo com a opcao selecionada no MenuOfertas 'PRE', 'POS' ou 'CONTROLE'."+
+                                "Requer uma option preenchida com PRE/POS/CONTROLE, selecionada no MenuOfertas.",
+                example:    "Cliente Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. " +
+                            "A opcao selecionada sera recebida via queryParameter. Opções : " +
+                            "PRE / POS / CONTROLE",
+                output: {
+                    //dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  Siebel.user.TipoPlanoCelular
+                },
+                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
+
+            })
+
+            let BusinessRule4 = new BusinessRuleModel({
+
+                channelId: "5e3a45f04f0fe914407c316a",
                 name: `Goto`,
                 type: 'plugin',
                 class: '5e3b25b55aa36d112c208b25',
@@ -299,28 +323,6 @@ app.listen(3000, function () {
 
             })
 
-            let BusinessRule4 = new BusinessRuleModel({
-
-                channelId: "5e3a45f04f0fe914407c316a",
-                name: `AlteraPlanoCelular`,
-                type: 'integration',
-                class: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
-                inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',    //  Siebel.user.numeroCelular
-                    modeltype: 'datapath'
-                }],
-
-                description: "Alterar o plano do cliente de acordo com a opcao selecionada no MenuOfertas 'PRE', 'POS' e 'CONTROLE' respectivamente.",
-                example: "Cliente Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. " +
-                    "A opcao selecionada sera recebida via queryParameter. Opções : " +
-                    "PRE / POS / CONTROLE",
-                output: {
-                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  Siebel.user.TipoPlanoCelular
-                },
-                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
-
-            })
 
             //console.log(Dialog.name)
 
