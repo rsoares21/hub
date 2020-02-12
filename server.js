@@ -38,18 +38,17 @@ app.listen(3000, function () {
             let welcomeMessage = `DIALOG : ${req.params.dialog}`
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
-            // CREATE TEMPLATE DIALOG *DEVONLY*
-
             const DialogModel = require('./core/database/models/mongoose/Dialog')
             let Dialog = new DialogModel({
 
-                name: 'Welcome',
+                name: 'Saudacao',
                 application: '5e3a413997ff8c3dd8fc17a4',
                 channel: '5e3a45f04f0fe914407c316a',
 
                 itemsList: [
-                    { modelId: "5e3debc97cedaf26245a368f", modelType: "prompt", index: 1 },
-                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "plugin", index: 2 }],
+                    { modelId: "5e3debc97cedaf26245a368f", modelType: "plugin", index: 1 },     //  busca dados da chamada
+                    { modelId: "5e3debc97cedaf26245a368f", modelType: "prompt", index: 1 },     //  prompt dinamico
+                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "plugin", index: 2 }],    //  Goto Menu Triagem
 
                 version: 0.1,
                 active: true,
@@ -64,7 +63,7 @@ app.listen(3000, function () {
                 channel: '5e3a45f04f0fe914407c316a',
 
                 itemsList: [
-                    { modelId: "5e3e02560d3c1e0290cb79e2", modelType: "prompt", index: 1 }],
+                    { modelId: "5e3e02560d3c1e0290cb79e2", modelType: "prompt", index: 1 }],    //  MenuTriagem.wav
 
                 version: 0.1,
                 active: true,
@@ -114,6 +113,7 @@ app.listen(3000, function () {
                 })
             Dialog2.save()
             Dialog3.save()
+            Dialog4.save()
 
             res.end(``)
 
@@ -148,9 +148,9 @@ app.listen(3000, function () {
                 files: [{ filename: 'ofertaPrePagoEControle.wav' }, { filename: 'ofertaPosPagoEControle.wav' }, { filename: 'ofertaPrePagoEPosPago.wav' }],
                 businessrule: '5e3cb7960d3c1e0290cb79df',
                 options: [
-                    [{ value: '1', dialog: null, queryString:'PRE' }, { value: '2', dialog: null, queryString:'CONTROLE' }, { value: '3', dialog: null, queryString:null }],
-                    [{ value: '1', dialog: null, queryString:'POS' }, { value: '2', dialog: null, queryString:'CONTROLE' }, { value: '3', dialog: null, queryString:null }],
-                    [{ value: '1', dialog: null, queryString:'PRE' }, { value: '2', dialog: null, queryString:'POS' }, { value: '3', dialog: null, queryString:null }]
+                    [{ value: '1', dialog: null, queryParam: 'PRE' }, { value: '2', dialog: null, queryParam: 'CONTROLE' }, { value: '3', dialog: null, queryParam: null }],
+                    [{ value: '1', dialog: null, queryParam: 'POS' }, { value: '2', dialog: null, queryParam: 'CONTROLE' }, { value: '3', dialog: null, queryParam: null }],
+                    [{ value: '1', dialog: null, queryParam: 'PRE' }, { value: '2', dialog: null, queryParam: 'POS' }, { value: '3', dialog: null, queryParam: null }]
                 ]
             })
 
@@ -169,7 +169,11 @@ app.listen(3000, function () {
             let Prompt5 = new PromptModel({
                 name: `MenuTriagem`,
                 content: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
-                files: [{ filename: 'MenuTrigem.wav' }]
+                files: [{ filename: 'MenuTrigem.wav' }],
+                options: [
+                    [   { value: '1', dialog: null, queryParam: null }, //  
+                        { value: '2', dialog: null, queryParam: null }],
+                ]
             })
 
             Prompt.save()
@@ -198,7 +202,7 @@ app.listen(3000, function () {
 
             const PluginModel = require('./core/database/models/mongoose/Plugin')
             let Plugin = new PluginModel({
-                name: `Saudacao_VXML`,
+                name: `Saudacao VXML`,
                 description: 'Saudacoes',
                 pluginWorker: {
                     name: 'Saudacao',
@@ -208,13 +212,49 @@ app.listen(3000, function () {
             })
 
             let Plugin2 = new PluginModel({
-                name: `Goto_VXML`,
+                name: `Redirect VXML`,
                 description: 'Gera um apontamento vxml para um outro Dialog <goto next="%HUB%/dialogs/BlackHole"/>',
                 pluginWorker: {
                     name: 'GotoVXML',
                     pluginMethods: [{
                         name: 'gotoDialog',
                         description: 'Retorna uma tag vxml goto apontando para outro Dialog.'
+                    }]
+                }
+            })
+
+            let Plugin3 = new PluginModel({
+                name: `LIQ SaveMetadata`,
+                description: 'Classe de gerenciamento dos dados na sessao (redis)',
+                pluginWorker: {
+                    name: 'MetadataManager',
+                    pluginMethods: [{
+                        name: 'SaveMetadata',
+                        description: 'Salva uma informação na sessão para ser usada posteriormente em outro Dialog'
+                    }]
+                }
+            })
+
+            let Plugin4 = new PluginModel({
+                name: `LIQ CallInfoManager`,
+                description: 'Recupera informações da chamada atual como VDN de entrada, ANI, HEADERS, etc...',
+                pluginWorker: {
+                    name: 'CallInfoManager',
+                    pluginMethods: [{
+                        name: 'getCallInfo',
+                        description: 'Retorna os dados da chamada'
+                    }]
+                }
+            })
+
+            let Plugin4 = new PluginModel({
+                name: `LIQ LeadManager`,
+                description: 'Manager de LEADS que são gerados durante a experiênci do usuário',
+                pluginWorker: {
+                    name: 'LeadManager',
+                    pluginMethods: [{
+                        name: 'Save',
+                        description: 'Retorna os dados da chamada'
                     }]
                 }
             })
@@ -229,6 +269,8 @@ app.listen(3000, function () {
                 })
 
             Plugin2.save()
+            Plugin3.save()
+            Plugin4.save()
 
             res.end(``)
 
@@ -272,8 +314,8 @@ app.listen(3000, function () {
                     modeltype: 'datapath'
                 }],
 
-                description: "Ofertar mudanca de planos diferentes do que o cliente ja possui.",
-                example: "Se cliente = PRE ofertar POS e COTROLE (ofertaPosPagoEControle.wav); Se cliente = POS ofertar PRE e CONTROLE (ofertaPrePagoEControle.wav); Se cliete = CONTROLE ofertar PRE e POS (ofertaPrePagoEPosPago.wav).",
+                description: "Ofertar mudanca de planos diferentes do que o usuário já possui.",
+                example: "Se usuário = PRE ofertar POS e COTROLE (ofertaPosPagoEControle.wav); Se usuário = POS ofertar PRE e CONTROLE (ofertaPrePagoEControle.wav); Se usuário = CONTROLE ofertar PRE e POS (ofertaPrePagoEPosPago.wav).",
                 expiration: 1000
 
             })
@@ -290,11 +332,11 @@ app.listen(3000, function () {
                     modeltype: 'datapath'
                 }],
 
-                description:    "Altera o plano do cliente de acordo com a opcao selecionada no MenuOfertas 'PRE', 'POS' ou 'CONTROLE'."+
-                                "Requer uma option preenchida com PRE/POS/CONTROLE, selecionada no MenuOfertas.",
-                example:    "Cliente Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. " +
-                            "A opcao selecionada sera recebida via queryParameter. Opções : " +
-                            "PRE / POS / CONTROLE",
+                description: "Altera o plano do usuário de acordo com a opcao selecionada no MenuOfertas 'PRE', 'POS' ou 'CONTROLE'." +
+                    "Requer uma option preenchida com PRE/POS/CONTROLE, selecionada no MenuOfertas.",
+                example: "Usuário Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. " +
+                    "A opcao selecionada sera recebida via queryParameter. Opções : " +
+                    "PRE / POS / CONTROLE",
                 output: {
                     //dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  Siebel.user.TipoPlanoCelular
                 },
@@ -351,7 +393,7 @@ app.listen(3000, function () {
                 integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
                 endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
                 path: `user.TIPO_PLANO_CELULAR`,
-                description: "Tipo de plano do cliente PRE, POS ou CONTROLE",
+                description: "Tipo de plano do usuário PRE, POS ou CONTROLE",
             })
 
             let DataPath1 = new DataPathModel({
@@ -380,7 +422,7 @@ app.listen(3000, function () {
                 endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
                 path: `param.dataHoje`,
                 description: "Parametro que simula uma data diferente da atual",
-                paramValue:'01/01/2021'
+                paramValue: '01/01/2021'
             })
 
             let DataPath5 = new DataPathModel({
@@ -388,7 +430,7 @@ app.listen(3000, function () {
                 endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
                 path: `param.dataPromocao`,
                 description: "Data inicial da Promocao",
-                paramValue:'01/02/2021'
+                paramValue: '01/02/2021'
             })
 
 
@@ -522,7 +564,7 @@ app.listen(3000, function () {
             const ApplicationModel = require('./core/database/models/mongoose/Application')
             let Application = new ApplicationModel({
                 name: `${req.params.application}`,
-                descricao: "Atendimento para clientes Pos Pago Oi",
+                descricao: "Atendimento para usuários Pos Pago Oi",
             })
 
             Application.save()
