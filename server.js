@@ -101,6 +101,22 @@ app.listen(3000, function () {
 
             })
 
+            let Dialog5 = new DialogModel({
+
+                name: 'Transfer',
+                application: '5e3a413997ff8c3dd8fc17a4',
+                channel: '5e3a45f04f0fe914407c316a',
+
+                itemsList: [
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "plugin", index: 1 }],   //  Transfere de acordo com dados do metadata
+
+                version: 0.1,
+                active: true,
+                process: false,
+
+            })
+
+
             //console.log(Dialog.name)
 
             Dialog.save()
@@ -114,6 +130,7 @@ app.listen(3000, function () {
             Dialog2.save()
             Dialog3.save()
             Dialog4.save()
+            Dialog5.save()
 
             res.end(``)
 
@@ -169,10 +186,10 @@ app.listen(3000, function () {
             let Prompt5 = new PromptModel({
                 name: `MenuTriagem`,
                 content: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
-                files: [{ filename: 'MenuTrigem.wav' }],
+                files: [{ filename: 'MenuTriagem.wav' }],
                 options: [
-                    [   { value: '1', dialog: null, queryParam: null }, //  
-                        { value: '2', dialog: null, queryParam: null }],
+                    [   { value: '1', dialog: null, queryParam: null, leadIds:null },     //  ConsultaInicialSiebel
+                        { value: '2', dialog: null, queryParam: null, leadIds:null }],    //  Transfer
                 ]
             })
 
@@ -190,7 +207,6 @@ app.listen(3000, function () {
             Prompt4.save()
             Prompt5.save()
 
-
             res.end(``)
 
         }),
@@ -202,7 +218,7 @@ app.listen(3000, function () {
 
             const PluginModel = require('./core/database/models/mongoose/Plugin')
             let Plugin = new PluginModel({
-                name: `Saudacao VXML`,
+                name: `Voice Saudacao VXML`,
                 description: 'Saudacoes',
                 pluginWorker: {
                     name: 'Saudacao',
@@ -212,10 +228,10 @@ app.listen(3000, function () {
             })
 
             let Plugin2 = new PluginModel({
-                name: `Redirect VXML`,
+                name: `Voice`,
                 description: 'Gera um apontamento vxml para um outro Dialog <goto next="%HUB%/dialogs/BlackHole"/>',
                 pluginWorker: {
-                    name: 'GotoVXML',
+                    name: 'VXMLTranslator',
                     pluginMethods: [{
                         name: 'gotoDialog',
                         description: 'Retorna uma tag vxml goto apontando para outro Dialog.'
@@ -224,7 +240,7 @@ app.listen(3000, function () {
             })
 
             let Plugin3 = new PluginModel({
-                name: `LIQ SaveMetadata`,
+                name: `HUB SaveMetadata`,
                 description: 'Classe de gerenciamento dos dados na sessao (redis)',
                 pluginWorker: {
                     name: 'MetadataManager',
@@ -236,7 +252,7 @@ app.listen(3000, function () {
             })
 
             let Plugin4 = new PluginModel({
-                name: `LIQ CallInfoManager`,
+                name: `HUB CallInfoManager`,
                 description: 'Recupera informações da chamada atual como VDN de entrada, ANI, HEADERS, etc...',
                 pluginWorker: {
                     name: 'CallInfoManager',
@@ -247,14 +263,26 @@ app.listen(3000, function () {
                 }
             })
 
-            let Plugin4 = new PluginModel({
-                name: `LIQ LeadManager`,
+            let Plugin5 = new PluginModel({
+                name: `HUB LeadManager`,
                 description: 'Manager de LEADS que são gerados durante a experiênci do usuário',
                 pluginWorker: {
                     name: 'LeadManager',
                     pluginMethods: [{
                         name: 'Save',
                         description: 'Retorna os dados da chamada'
+                    }]
+                }
+            })
+
+            let Plugin6 = new PluginModel({
+                name: `Voice Call Transfer`,
+                description: 'Transferência de chamadas',
+                pluginWorker: {
+                    name: 'CallManager',
+                    pluginMethods: [{
+                        name: 'Transfer',
+                        description: 'Transfere de acordo com dados do metadata'
                     }]
                 }
             })
@@ -271,6 +299,8 @@ app.listen(3000, function () {
             Plugin2.save()
             Plugin3.save()
             Plugin4.save()
+            Plugin5.save()
+            Plugin6.save()
 
             res.end(``)
 
