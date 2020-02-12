@@ -47,8 +47,8 @@ app.listen(3000, function () {
 
                 itemsList: [
                     { modelId: "5e3debc97cedaf26245a368f", modelType: "plugin", index: 1 },     //  busca dados da chamada
-                    { modelId: "5e3debc97cedaf26245a368f", modelType: "prompt", index: 1 },     //  prompt dinamico
-                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "plugin", index: 2 }],    //  Goto Menu Triagem
+                    { modelId: "5e3debc97cedaf26245a368f", modelType: "prompt", index: 2 },     //  prompt dinamico
+                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "plugin", index: 3 }],    //  Goto Menu Triagem
 
                 version: 0.1,
                 active: true,
@@ -63,7 +63,8 @@ app.listen(3000, function () {
                 channel: '5e3a45f04f0fe914407c316a',
 
                 itemsList: [
-                    { modelId: "5e3e02560d3c1e0290cb79e2", modelType: "prompt", index: 1 }],    //  MenuTriagem.wav
+                    { modelId: "5e3e02560d3c1e0290cb79e2", modelType: "prompt", index: 1 },     //  Bemvindo.wav
+                    { modelId: "5e3e02560d3c1e0290cb79e2", modelType: "prompt", index: 2 }],    //  MenuTriagem.wav
 
                 version: 0.1,
                 active: true,
@@ -73,12 +74,13 @@ app.listen(3000, function () {
 
             let Dialog3 = new DialogModel({
 
-                name: 'MenuOfertas',
+                name: 'ConsultaInicialSiebel',
                 application: '5e3a413997ff8c3dd8fc17a4',
                 channel: '5e3a45f04f0fe914407c316a',
 
                 itemsList: [
-                    { modelId: "5e3debc97cedaf26245a3699", modelType: "prompt", index: 1 }],
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "integration", index: 1 }],   //  Consulta dos dados do plano de celular do usuário     integrationFaultDialog, integrationSuccessDialog
+
 
                 version: 0.1,
                 active: true,
@@ -88,12 +90,12 @@ app.listen(3000, function () {
 
             let Dialog4 = new DialogModel({
 
-                name: 'AlteraPlanoCelular',
+                name: 'MenuOfertas',
                 application: '5e3a413997ff8c3dd8fc17a4',
                 channel: '5e3a45f04f0fe914407c316a',
 
                 itemsList: [
-                    { modelId: "5e3debc97cedaf26245a3699", modelType: "integration", index: 1 }],
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "prompt", index: 1 }],    //  Prompt dinamico
 
                 version: 0.1,
                 active: true,
@@ -103,12 +105,28 @@ app.listen(3000, function () {
 
             let Dialog5 = new DialogModel({
 
+                name: 'AlteraPlanoCelular',
+                application: '5e3a413997ff8c3dd8fc17a4',
+                channel: '5e3a45f04f0fe914407c316a',
+
+                itemsList: [
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "integration", index: 1 }],   //  Altera Plano do usuário de acordo com a opção selecionada no MenuTriagem     integrationFaultDialog, integrationSuccessDialog
+
+                version: 0.1,
+                active: true,
+                process: false,
+
+            })
+
+            let Dialog6 = new DialogModel({
+
                 name: 'Transfer',
                 application: '5e3a413997ff8c3dd8fc17a4',
                 channel: '5e3a45f04f0fe914407c316a',
 
                 itemsList: [
-                    { modelId: "5e3debc97cedaf26245a3699", modelType: "plugin", index: 1 }],   //  Transfere de acordo com dados do metadata
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "prompt", index: 1 },    //  Aguarde
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "plugin", index: 2 }],   //  Transfere de acordo com regras de dados do metadata
 
                 version: 0.1,
                 active: true,
@@ -131,6 +149,7 @@ app.listen(3000, function () {
             Dialog3.save()
             Dialog4.save()
             Dialog5.save()
+            Dialog6.save()
 
             res.end(``)
 
@@ -156,6 +175,22 @@ app.listen(3000, function () {
             })
 
             let Prompt2 = new PromptModel({
+                name: `BemVindoTriagem`,
+                content: [{ value: 'Bem vindo ao nosso Hub!' }],
+                files: [{ filename: 'Bemvindo.wav' }]
+            })
+
+            let Prompt3 = new PromptModel({
+                name: `MenuTriagem`,
+                content: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
+                files: [{ filename: 'MenuTriagem.wav' }],
+                options: [
+                    [{ value: '1', dialog: null, queryParam: null, leadIds: null },     //  ConsultaInicialSiebel
+                    { value: '2', dialog: null, queryParam: null, leadIds: '5e3b24574b1f6736dc08dadd' }],    //  dialog Transfer , lead #01
+                ]
+            })
+
+            let Prompt4 = new PromptModel({
                 name: `MenuOfertas`,
                 content: [
                     { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
@@ -171,27 +206,18 @@ app.listen(3000, function () {
                 ]
             })
 
-            let Prompt3 = new PromptModel({
-                name: `BemVindoTriagem`,
-                content: [{ value: 'Bem vindo ao nosso Hub!' }],
-                files: [{ filename: 'welcome.wav' }]
-            })
-
-            let Prompt4 = new PromptModel({
-                name: `ObrigadoPorLigar`,
-                content: [{ value: 'Obrigado por entrar em contato conosco. Até logo.' }],
-                files: [{ filename: 'obrigadoporligar.wav' }]
-            })
-
             let Prompt5 = new PromptModel({
-                name: `MenuTriagem`,
-                content: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
-                files: [{ filename: 'MenuTriagem.wav' }],
-                options: [
-                    [   { value: '1', dialog: null, queryParam: null, leadIds:null },     //  ConsultaInicialSiebel
-                        { value: '2', dialog: null, queryParam: null, leadIds:null }],    //  Transfer
-                ]
+                name: `Aguarde Transferencia`,
+                content: [{ value: 'Por favor aguarde, vamos transferir pra um de nossos consultores.' }],
+                files: [{ filename: 'Aguarde.wav' }]
             })
+
+            let Prompt6 = new PromptModel({
+                name: `ObrigadoPorLigar`,
+                content: [{ value: 'Seu plano foi alterado com sucesso. Obrigado por entrar em contato conosco. Até logo!' }],
+                files: [{ filename: 'ObrigadoPorLigar.wav' }]
+            })
+
 
             Prompt.save()
                 .then(doc => {
@@ -206,6 +232,7 @@ app.listen(3000, function () {
             Prompt3.save()
             Prompt4.save()
             Prompt5.save()
+            Prompt6.save()
 
             res.end(``)
 
@@ -231,10 +258,13 @@ app.listen(3000, function () {
                 name: `Voice`,
                 description: 'Gera um apontamento vxml para um outro Dialog <goto next="%HUB%/dialogs/BlackHole"/>',
                 pluginWorker: {
-                    name: 'VXMLTranslator',
+                    name: 'VXMLTagCreator',
                     pluginMethods: [{
                         name: 'gotoDialog',
                         description: 'Retorna uma tag vxml goto apontando para outro Dialog.'
+                    }, {
+                        name: 'promptPause',
+                        description: 'Retorna uma tag vxml de pause para toca de prompts.'
                     }]
                 }
             })

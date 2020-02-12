@@ -15,11 +15,13 @@ let BusinessRuleSchema = new mongoose.Schema({
     }],
     description: String,
     example: String,
-    output: {   //  retorna um obj dataPath, mas a partir do output será tratado como metadataPath
+    output: {   //  retorna um obj dataPath, mas a partir do output de um plugin será tratado como metadataPath, se for output de uma integracao será datapath
         dataPathList: [{ metadataPathId: mongoose.Schema.Types.ObjectId }]  // retorna o dataPath : SIEBEL.tipoPlano
         // scale- outros retornos podem ser adicionados de acordo com a necessidade
     },
     //modeltype: "BusinessRule",   // Identificador do tipo de objeto parent (diferenciando metadataPath e dataPath)
+    integrationFaultDialog:mongoose.Schema.Types.ObjectId,
+    integrationSuccessDialog:mongoose.Schema.Types.ObjectId,
     expiration: Number    //  controla quando a regra deve ser revalidada e atualizada no redis
 
 });
