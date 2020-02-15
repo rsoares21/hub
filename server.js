@@ -134,6 +134,22 @@ app.listen(3000, function () {
 
             })
 
+            let Dialog7 = new DialogModel({
+
+                name: 'Despedida',
+                application: '5e3a413997ff8c3dd8fc17a4',
+                channel: '5e3a45f04f0fe914407c316a',
+
+                itemsList: [
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "prompt", index: 1 },    //  Despedida.wav
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "plugin", index: 2 }],   //  Goodbye plugin
+
+                version: 0.1,
+                active: true,
+                process: false,
+
+            })
+
 
             //console.log(Dialog.name)
 
@@ -150,6 +166,7 @@ app.listen(3000, function () {
             Dialog4.save()
             Dialog5.save()
             Dialog6.save()
+            Dialog7.save()
 
             res.end(``)
 
@@ -208,14 +225,14 @@ app.listen(3000, function () {
 
             let Prompt5 = new PromptModel({
                 name: `Aguarde Transferencia`,
-                content: [{ value: 'Por favor aguarde, vamos transferir pra um de nossos consultores.' }],
+                content: [{ value: 'Você está sendo direcionado para um de nossos consultores. Por favor, aguarde.' }],
                 files: [{ filename: 'Aguarde.wav' }]
             })
 
             let Prompt6 = new PromptModel({
-                name: `ObrigadoPorLigar`,
+                name: `Despedida`,
                 content: [{ value: 'Seu plano foi alterado com sucesso. Obrigado por entrar em contato conosco. Até logo!' }],
-                files: [{ filename: 'ObrigadoPorLigar.wav' }]
+                files: [{ filename: 'Despedida.wav' }]
             })
 
 
@@ -317,6 +334,18 @@ app.listen(3000, function () {
                 }
             })
 
+            let Plugin7 = new PluginModel({
+                name: `Goodbye`,
+                description: 'Salva informações da experiência recente do usuário',
+                pluginWorker: {
+                    name: 'Googbye',
+                    pluginMethods: [{
+                        name: 'SaveInfo',
+                        description: 'Salva alguma informação do atendimento recente.'
+                    }]
+                }
+            })
+
             Plugin.save()
                 .then(doc => {
                     //console.log(doc)
@@ -331,6 +360,7 @@ app.listen(3000, function () {
             Plugin4.save()
             Plugin5.save()
             Plugin6.save()
+            Plugin7.save()
 
             res.end(``)
 
@@ -340,8 +370,6 @@ app.listen(3000, function () {
 
             let welcomeMessage = `BUSINESS RULE : ${req.params.businessrule}`
             console.log(`[${req.session.id}] ${welcomeMessage}`)
-
-            // CREATE TEMPLATE PLUGIN *DEVONLY*
 
             const BusinessRuleModel = require('./core/database/models/mongoose/BusinessRule')
             let BusinessRule = new BusinessRuleModel({
@@ -383,12 +411,36 @@ app.listen(3000, function () {
             let BusinessRule3 = new BusinessRuleModel({
 
                 channelId: "5e3a45f04f0fe914407c316a",
+                name: `Integração Inicial Siebel`,
+                type: 'integration',
+                class: '5e3b25b55aa36d112c208b25',
+                method: '5e3b1d36922477484406cc69',
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',    // user.ani
+                    modeltype: 'datapath'
+                }],
+
+                description: "Consulta dados do usuário através do ANI.",
+                example: "ANI = 5521999797799",
+                output: {
+                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }, //  integracaoInicial.failed = true/false
+                    { _id: '5e3b138185e02b46b82cec6f' },                //  integracaoInicial.userNotFound = true/false
+                    { _id: '5e3b138185e02b46b82cec6f' }]                //  user.ani.tipoPlano = retorno Integração campo tipoPlano
+                },
+                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
+
+            })
+
+
+            let BusinessRule4 = new BusinessRuleModel({
+
+                channelId: "5e3a45f04f0fe914407c316a",
                 name: `AlteraPlanoCelular`,
                 type: 'integration',
                 class: '5e3b25b55aa36d112c208b25',
                 method: '5e3b1d36922477484406cc69',
                 inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',    // Siebel.user.numeroCelular para solicitar a mudança no plano
+                    modelId: '5e3b0234e389162f5835e761',    // user.ani para solicitar a mudança no plano
                     modeltype: 'datapath'
                 }],
 
@@ -398,13 +450,13 @@ app.listen(3000, function () {
                     "A opcao selecionada sera recebida via queryParameter. Opções : " +
                     "PRE / POS / CONTROLE",
                 output: {
-                    //dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  Siebel.user.TipoPlanoCelular
+                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }, { _id: '5e3b138185e02b46b82cec6f' }] //  alteraPlano.failed = true/false, alteraPlano.resultMsg = retorno da integração
                 },
                 expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
 
             })
 
-            let BusinessRule4 = new BusinessRuleModel({
+            let BusinessRule5 = new BusinessRuleModel({
 
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `Goto`,
@@ -419,6 +471,49 @@ app.listen(3000, function () {
                 description: "Criar um redirecionamento para outro Dialog.",
                 example: "Redirecionando para dialog Triagem",
                 expiration: 1000
+
+            })
+
+            let BusinessRule6 = new BusinessRuleModel({
+
+                channelId: "5e3a45f04f0fe914407c316a",
+                name: `OfertaPromos`,
+                type: 'plugin',
+                class: 'Promos',
+                method: 'OfertaPromoByDatePeriod',
+                inputList: [{
+                    modelId: '',
+                    modeltype: 'parameter'
+                }],
+
+                description: `Verifica se a data atual está dentro do período informado pelo parametro da promoção do dia das Maes 2020. O valor do parametro deve ser '10/05/2020_00:00:00 10/06/2020_23:59:59'`,
+                example: "Se data atual estiver dentro do periodo informado no parametro retorna metadata com valor 'true'",
+                output: {
+                    dataPathList: [{ metadataPathId: 'md.promoMaes2020.ativa' }]
+                },
+
+                expiration: 1000
+
+            })
+
+            let BusinessRule7 = new BusinessRuleModel({
+
+                channelId: "5e3a45f04f0fe914407c316a",
+                name: `AdesaoPromoMaes2020`,
+                type: 'integration',
+                class: '5e3b25b55aa36d112c208b25',
+                method: '5e3b1d36922477484406cc69',
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',    // user.ani
+                    modeltype: 'datapath'
+                }],
+
+                description: "Solicita adesão para promoção do Dia das Mães 2020 através do ANI, conforme documentação.",
+                example: "Usuário solicita adesão para a promoção do Dia Das Mães 2020, que será definida dentro do período informado em parâmetro. Ex: 01/01/2020 00:00:00 15/01/2020 23:59:59",
+                output: {
+                    //dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  metadata.AlteraPlano.fail = true
+                },
+                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
 
             })
 
@@ -437,6 +532,9 @@ app.listen(3000, function () {
             BusinessRule2.save()
             BusinessRule3.save()
             BusinessRule4.save()
+            BusinessRule5.save()
+            BusinessRule6.save()
+            BusinessRule7.save()
 
 
             res.end(``)
@@ -450,47 +548,45 @@ app.listen(3000, function () {
 
             const DataPathModel = require('./core/database/models/mongoose/DataPath')
             let DataPath = new DataPathModel({
-                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
-                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
-                path: `user.TIPO_PLANO_CELULAR`,
-                description: "Tipo de plano do usuário PRE, POS ou CONTROLE",
+                path: `user.ani.tipoPlano`,
+                description: "Tipo de plano do ANI (PRE, POS ou CONTROLE)",
             })
 
             let DataPath1 = new DataPathModel({
-                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
-                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
-                path: `user.NUMERO_CELULAR`,
-                description: "Numero do celular principal do usuário.",
+                path: `user.ani.number`,
+                description: "Numero do celular identificado automaticamente (ANI)",
             })
 
             let DataPath2 = new DataPathModel({
-                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
-                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
-                path: `metadata.AlteraPlanoPreResultCode`,
-                description: "Codigp de retorno da solicitacao de mudança de plano do MenuOfertas.",
+                path: `md.integracaoInicial.failed`,
+                description: "Controle de falha na chamada da Integração Inicial (SIEBEL)",
             })
 
             let DataPath3 = new DataPathModel({
-                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
-                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
-                path: `metadata.AlteraPlanoPreResultMsg`,
-                description: "Mensagem de retorno da solicitacao de mudança de plano do MenuOfertas.",
+                path: `md.alteraPlano.resultCode`,
+                description: "Codigp de retorno da solicitacao de mudança de plano do MenuOfertas.",
             })
 
             let DataPath4 = new DataPathModel({
-                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
-                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
+                path: `md.alteraPlano.resultMsg`,
+                description: "Mensagem de retorno da solicitacao de mudança de plano do MenuOfertas.",
+            })
+
+            let DataPath5 = new DataPathModel({
                 path: `param.dataHoje`,
                 description: "Parametro que simula uma data diferente da atual",
                 paramValue: '01/01/2021'
             })
 
-            let DataPath5 = new DataPathModel({
-                integration: '5e3b138185e02b46b82cec6f',    //  SIEBEL
-                endPoint: '5e3b138185e02b46b82cec6f',   //  SIEBEL Method
-                path: `param.dataPromocao`,
-                description: "Data inicial da Promocao",
+            let DataPath6 = new DataPathModel({
+                path: `param.dataPromoMaes2020`,
+                description: "Período de atividade da Promoção de Dia das Mães 2020. Ex: ",
                 paramValue: '01/02/2021'
+            })
+
+            let DataPath7 = new DataPathModel({
+                path: `md.PromoMaes.ativa`,
+                description: "Validação da data de promoção do Dia das Mães 2020.",
             })
 
 
@@ -509,6 +605,8 @@ app.listen(3000, function () {
             DataPath3.save()
             DataPath4.save()
             DataPath5.save()
+            DataPath6.save()
+            DataPath7.save()
 
             res.end(``)
 
@@ -527,9 +625,9 @@ app.listen(3000, function () {
             })
 
             let Parameter1 = new ParameterModel({
-                name: 'dataPromocao',
-                description: 'Data de inicio da Promoção',
-                value: '01/07/2020'
+                name: 'dataPromMaes',
+                description: `Período da promoção do Dia das Mães 2020.`,
+                value: '10/05/2020_00:00:00 10/06/2020_23:59:59'
             })
 
 
@@ -555,20 +653,20 @@ app.listen(3000, function () {
             const IntegrationModel = require('./core/database/models/mongoose/Integration')
             let Integration = new IntegrationModel({
                 name: `Siebel`,
-                shortname: 'altplan',  //  10 chars no maximo
+                shortname: 'siebel',  //  10 chars no maximo
                 description: "Integração que gerencia os planos de celular",
                 integrationManager: {
                     name: "Siebel",   // Nome da classe client manager da integração
                     endpoints: [{
-                        name: "ObterTipoPlanoCelular",   //  Nome da function na classe manager da integracao Ex: ControleAdesaoBoleto, ControleAdesaoCartao, ControleCadastroCartao  fullpath={pluginWorker.pluginMethod}
-                        description: "Retorna o tipo de plano de celular do usuario. Ex: POS, PRE CONTROLE",
-                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }] // Siebel.user.TipoPlanoCelular
+                        name: "ObterDadosUsuario",   //  Nome da function na classe manager da integracao Ex: AlteraPlanoCelular
+                        description: "Retorna dados como o tipo de plano de celular do usuario. Ex: POS, PRE CONTROLE. Entre outras informações como CPF, ID, etc...",
+                        //datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }] // Siebel.user.TipoPlanoCelular
                         //metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }] 
                     }, {
                         name: "AlteraPlanoCelular",
                         description: "Solicita alteração de plano para Pré Pago, Pós Pago ou Controle. Requer uma option PLANO=PRE/POS/CONTROLE, selecionada no MenuOfertas. Retorna ResultCode e ResultMsg.",
-                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }], // Siebel.user.numeroCelular para solicitar a mudança no plano
-                        metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }, { _id: '5e3afe03f4bcee04480d10fc' }] // AlteraPlanoPreResultCode, AlteraPlanoPreResultMsg
+                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }], // user.ani para solicitar a mudança no plano
+                        //metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }, { _id: '5e3afe03f4bcee04480d10fc' }] // AlteraPlanoPreResultCode, AlteraPlanoPreResultMsg
                     }]
                 }
             })
@@ -592,13 +690,11 @@ app.listen(3000, function () {
             let welcomeMessage = `CHANNEL : ${req.params.channel}`
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
-            // CREATE TEMPLATE PLUGIN *DEVONLY*
-
             const ChannelModel = require('./core/database/models/mongoose/Channel')
             let Channel = new ChannelModel({
-                name: `${req.params.channel}`,
-                descricao: "Converte dados do Dialog para formato VXML.",
-                application: "5e3a413997ff8c3dd8fc17a4"
+                name: `VXML`,
+                descricao: "Respostas do hub em formato VXML.",
+                application: "5e476a593f836b0e8cc7c999"
             })
 
             Channel.save()
@@ -619,12 +715,10 @@ app.listen(3000, function () {
             let welcomeMessage = `APPLICATION : ${req.params.application}`
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
-            // CREATE TEMPLATE PLUGIN *DEVONLY*
-
             const ApplicationModel = require('./core/database/models/mongoose/Application')
             let Application = new ApplicationModel({
-                name: `${req.params.application}`,
-                descricao: "Atendimento para usuários Pos Pago Oi",
+                name: `Oi-144`,
+                descricao: "Atendimento para usuários da Oi",
             })
 
             Application.save()

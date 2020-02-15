@@ -1,0 +1,24 @@
+{
+    "ani": {
+        "number": "552199979779955",
+        "tipoPlano": "PRE"
+    },
+    "dadosPessoais": {
+        "nome": "José Maria",
+        "cpf": "12345678789"
+    },
+    "contatos": {
+        "mainCellPhone": "5521999797799",
+        "email": "user@gmail.com",
+        "mainLandline": null
+    },
+    "contratos": {
+        "celular": [
+            {
+                "numero": "5521999797799",
+                "numeroPrincipal": true,
+                "tipoPlano": "PRE",
+            }
+        ]
+    }
+}
