@@ -666,21 +666,36 @@ app.listen(3000, function () {
 
             const IntegrationModel = require('./core/database/models/mongoose/Integration')
             let Integration = new IntegrationModel({
-                name: `Siebel`,
-                shortname: 'siebel',  //  10 chars no maximo
-                description: "Integração que gerencia os planos de celular",
+                name: `Parametros`,
+                shortname: 'param',  //  10 chars no maximo
+                description: "Integração que gerencia os parametros de navegação da aplicação. Ex: dataInicioPromocao, horaInicioAtendimento, etc...",
                 integrationManager: {
-                    name: "Siebel",   // Nome da classe client manager da integração
+                    name: "ParametersManager",
                     endpoints: [{
-                        name: "ObterDadosUsuario",   //  Nome da function na classe manager da integracao Ex: AlteraPlanoCelular
-                        description: "Retorna dados como o tipo de plano de celular do usuario. Ex: POS, PRE CONTROLE. Entre outras informações como CPF, ID, etc...",
-                        //datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }] // Siebel.user.TipoPlanoCelular
-                        //metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }] 
+                        name: "IdentificaPromoAtiva",
+                        description: `Verifica se a data da promoção está dentro do período informado no formato '01/05/2020_00:00:00 15/05/2020_23:59:59' `
+                    },{
+                        name: "IdentificaPromoAtiva",
+                        description: `Verifica se a data da promoção está dentro do período informado no formato '01/05/2020_00:00:00 15/05/2020_23:59:59' `
                     }, {
                         name: "AlteraPlanoCelular",
-                        description: "Solicita alteração de plano para Pré Pago, Pós Pago ou Controle. Requer uma option PLANO=PRE/POS/CONTROLE, selecionada no MenuOfertas. Retorna ResultCode e ResultMsg.",
-                        datapaths: [{ _id: '5e3afe03f4bcee04480d10fc' }], // user.ani para solicitar a mudança no plano
-                        //metadata: [{ _id: '5e3afe03f4bcee04480d10fc' }, { _id: '5e3afe03f4bcee04480d10fc' }] // AlteraPlanoPreResultCode, AlteraPlanoPreResultMsg
+                        description: "Solicita alteração de plano para Pré Pago, Pós Pago ou Controle. Requer uma option PLANO=PRE/POS/CONTROLE, selecionada no MenuOfertas."
+                    }]
+                }
+            })
+
+            let Integration1 = new IntegrationModel({
+                name: `Siebel`,
+                shortname: 'siebel',  //  10 chars no maximo
+                description: "Integração que gerencia os planos de celular e retorna dados do usuario",
+                integrationManager: {
+                    name: "SiebelManager",
+                    endpoints: [{
+                        name: "IntegracaoInicialSiebel",
+                        description: "Retorna dados como o tipo de plano de celular do usuario. Ex: POS, PRE CONTROLE. Entre outras informações como CPF, ID, etc..."
+                    }, {
+                        name: "AlteraPlanoCelular",
+                        description: "Solicita alteração de plano para Pré Pago, Pós Pago ou Controle. Requer uma option PLANO=PRE/POS/CONTROLE, selecionada no MenuOfertas."
                     }]
                 }
             })
