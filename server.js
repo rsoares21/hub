@@ -372,10 +372,32 @@ app.listen(3000, function () {
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
             const BusinessRuleModel = require('./core/database/models/mongoose/BusinessRule')
+
             let BusinessRule = new BusinessRuleModel({
 
                 channelId: "5e3a45f04f0fe914407c316a",
-                name: `Saudacao`,
+                name: `Goto (Voice)`,
+                type: 'plugin',
+                class: '5e3b25b55aa36d112c208b25',
+                method: '5e3b1d36922477484406cc69',
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',    //  MenuTriagem
+                    modeltype: 'dialog'
+                },{
+                    modelId:'5e3b0234e389162f5835e761',     //  param.voice.pauseGoto
+                    modeltype:'parameter'
+                }],
+
+                description: "Criar um redirecionamento para outro Dialog respeitando o parametro com o tempo a ser aguardado antes do redirecionamento.",
+                example: "Aguardar 5 segundos antes de direcionar para o próximo Dialog (Voice) <break time='1.5s'/>",
+                expiration: 1000
+
+            })
+
+            let BusinessRule1 = new BusinessRuleModel({
+
+                channelId: "5e3a45f04f0fe914407c316a",
+                name: `Saudacao (Voice)`,
                 type: 'plugin',
                 class: '5e3b25b55aa36d112c208b25',
                 method: '5e3b1d36922477484406cc69',
@@ -391,24 +413,6 @@ app.listen(3000, function () {
             })
 
             let BusinessRule2 = new BusinessRuleModel({
-
-                channelId: "5e3a45f04f0fe914407c316a",
-                name: `MenuOfertas`,
-                type: 'plugin',
-                class: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
-                inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',
-                    modeltype: 'datapath'
-                }],
-
-                description: "Ofertar mudanca de planos diferentes do que o usuário já possui.",
-                example: "Se usuário = PRE ofertar POS e COTROLE (ofertaPosPagoEControle.wav); Se usuário = POS ofertar PRE e CONTROLE (ofertaPrePagoEControle.wav); Se usuário = CONTROLE ofertar PRE e POS (ofertaPrePagoEPosPago.wav).",
-                expiration: 1000
-
-            })
-
-            let BusinessRule3 = new BusinessRuleModel({
 
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `Integração Inicial Siebel`,
@@ -427,10 +431,30 @@ app.listen(3000, function () {
                     { _id: '5e3b138185e02b46b82cec6f' },                //  integracaoInicial.userNotFound = true/false
                     { _id: '5e3b138185e02b46b82cec6f' }]                //  user.ani.tipoPlano = retorno Integração campo tipoPlano
                 },
+                integrationFaultDialog:'5e3b138185e02b46b82cec6f',  //  Transfer
+                integrationSuccessDialog:'5e3b138185e02b46b82cec6f',    //  MenuOfertas
+            
                 expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
 
             })
+            
+            let BusinessRule3 = new BusinessRuleModel({
 
+                channelId: "5e3a45f04f0fe914407c316a",
+                name: `MenuOfertas (Voice)`,
+                type: 'plugin',
+                class: '5e3b25b55aa36d112c208b25',
+                method: '5e3b1d36922477484406cc69',
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',    //  ani.tipoPlano
+                    modeltype: 'datapath'
+                }],
+
+                description: "Ofertar mudanca de planos diferentes do que o usuário já possui.",
+                example: "Se usuário = PRE ofertar POS e COTROLE (ofertaPosPagoEControle.wav); Se usuário = POS ofertar PRE e CONTROLE (ofertaPrePagoEControle.wav); Se usuário = CONTROLE ofertar PRE e POS (ofertaPrePagoEPosPago.wav).",
+                expiration: 1000
+
+            })
 
             let BusinessRule4 = new BusinessRuleModel({
 
@@ -452,6 +476,9 @@ app.listen(3000, function () {
                 output: {
                     dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }, { _id: '5e3b138185e02b46b82cec6f' }] //  alteraPlano.failed = true/false, alteraPlano.resultMsg = retorno da integração
                 },
+                integrationFaultDialog:'5e3b138185e02b46b82cec6f',  //  Transfer
+                integrationSuccessDialog:'5e3b138185e02b46b82cec6f',    //  OfertaPromoMaes2020
+
                 expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
 
             })
@@ -459,28 +486,10 @@ app.listen(3000, function () {
             let BusinessRule5 = new BusinessRuleModel({
 
                 channelId: "5e3a45f04f0fe914407c316a",
-                name: `Goto`,
+                name: `Oferta Promoção Maes 2020`,
                 type: 'plugin',
-                class: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
-                inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',
-                    modeltype: 'dialog'
-                }],
-
-                description: "Criar um redirecionamento para outro Dialog.",
-                example: "Redirecionando para dialog Triagem",
-                expiration: 1000
-
-            })
-
-            let BusinessRule6 = new BusinessRuleModel({
-
-                channelId: "5e3a45f04f0fe914407c316a",
-                name: `OfertaPromos`,
-                type: 'plugin',
-                class: 'Promos',
-                method: 'OfertaPromoByDatePeriod',
+                class: 'OfertaPromos',
+                method: 'OfertaPromoMaes',
                 inputList: [{
                     modelId: '',
                     modeltype: 'parameter'
@@ -491,12 +500,14 @@ app.listen(3000, function () {
                 output: {
                     dataPathList: [{ metadataPathId: 'md.promoMaes2020.ativa' }]
                 },
+                integrationFaultDialog:'5e3b138185e02b46b82cec6f',  //  Despedida
+                integrationSuccessDialog:'5e3b138185e02b46b82cec6f',    //  MenuOfertaPromoMaes2020
 
                 expiration: 1000
 
             })
 
-            let BusinessRule7 = new BusinessRuleModel({
+            let BusinessRule6 = new BusinessRuleModel({
 
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `AdesaoPromoMaes2020`,
@@ -513,6 +524,9 @@ app.listen(3000, function () {
                 output: {
                     //dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  metadata.AlteraPlano.fail = true
                 },
+                integrationFaultDialog:'5e3b138185e02b46b82cec6f',  //  Transfer
+                integrationSuccessDialog:'5e3b138185e02b46b82cec6f',    //  DespedidaPromoMaes2020
+
                 expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
 
             })
@@ -529,12 +543,12 @@ app.listen(3000, function () {
                     console.error(err)
                 })
 
+            BusinessRule1.save()
             BusinessRule2.save()
             BusinessRule3.save()
             BusinessRule4.save()
             BusinessRule5.save()
             BusinessRule6.save()
-            BusinessRule7.save()
 
 
             res.end(``)
@@ -585,8 +599,8 @@ app.listen(3000, function () {
             })
 
             let DataPath7 = new DataPathModel({
-                path: `md.PromoMaes.ativa`,
-                description: "Validação da data de promoção do Dia das Mães 2020.",
+                path: `param.voice.pauseGoto`,
+                description: "Tempo de espera antes de redirecionar para outro Dialog (Voice.)",
             })
 
 
