@@ -33,6 +33,15 @@ app.listen(3000, function () {
             res.end(`HUB Up!\nSend more info...\n\nHow can i help you dear REST client ?`)
         }),
 
+        app.get('/hub/helper/lead/:lead', (req, res) => {
+            const LeadModel = require('./core/database/models/mongoose/Lead')
+            let Lead = new LeadModel({
+                path: `lead.voip.{ani}.hangup.date`,
+                description: `Data do término do atendimento para esse usuário, nesse canal.`
+            });
+            Lead.save()
+        }),
+
         app.get('/hub/helper/dialog/:dialog', (req, res) => {
 
             let welcomeMessage = `DIALOG : ${req.params.dialog}`
@@ -40,127 +49,107 @@ app.listen(3000, function () {
 
             const DialogModel = require('./core/database/models/mongoose/Dialog')
             let Dialog = new DialogModel({
+                name: 'ObterDadosChamador',
+                application: '5e476a593f836b0e8cc7c999',
+                channel: '5e3a45f04f0fe914407c316a',
+                itemsList: [
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "integration", index: 1 }],   //  Consulta dados da rede Voip
+                version: 0.1,
+                active: true,
+                process: true,
+            })
 
+            let Dialog1 = new DialogModel({
                 name: 'Saudacao',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e476acecce4cd2860b9869d',
-
                 itemsList: [
-                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "plugin", index: 1 },    //  VoiceCallInfoManager
+                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "businessRule", index: 1 },    //  VoiceCallInfoManager
                     { modelId: "5e3debc97cedaf26245a368f", modelType: "prompt", index: 2 },     //  prompt dinamico
-                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "plugin", index: 3 }],    //  Goto Menu Triagem
-
+                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "businessRule", index: 3 }],    //  Goto Menu Triagem
                 version: 0.1,
                 active: true,
                 process: false,
-
             })
 
             let Dialog2 = new DialogModel({
-
                 name: 'MenuTriagem',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
-
                 itemsList: [
                     { modelId: "5e3e02560d3c1e0290cb79e2", modelType: "prompt", index: 1 },     //  Bemvindo.wav
                     { modelId: "5e3e02560d3c1e0290cb79e2", modelType: "prompt", index: 2 }],    //  MenuTriagem.wav
-
                 version: 0.1,
                 active: true,
                 process: false,
-
             })
 
             let Dialog3 = new DialogModel({
-
                 name: 'ConsultaInicialSiebel',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
-
                 itemsList: [
                     { modelId: "5e3debc97cedaf26245a3699", modelType: "integration", index: 1 }],   //  Consulta dos dados do plano de celular do usuário     integrationFaultDialog, integrationSuccessDialog
-
-
                 version: 0.1,
                 active: true,
                 process: true,
-
             })
 
             let Dialog4 = new DialogModel({
-
                 name: 'MenuOfertas',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
-
                 itemsList: [
                     { modelId: "5e3debc97cedaf26245a3699", modelType: "prompt", index: 1 }],    //  Prompt dinamico
-
                 version: 0.1,
                 active: true,
                 process: false,
-
             })
 
             let Dialog5 = new DialogModel({
-
                 name: 'AlteraPlanoCelular',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
-
                 itemsList: [
                     { modelId: "5e3debc97cedaf26245a3699", modelType: "integration", index: 1 }],   //  Altera Plano do usuário de acordo com a opção selecionada no MenuTriagem     integrationFaultDialog, integrationSuccessDialog
-
                 version: 0.1,
                 active: true,
                 process: true,
-
             })
 
             let Dialog6 = new DialogModel({
-
                 name: 'Transfer',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
-
                 itemsList: [
                     { modelId: "5e3debc97cedaf26245a3699", modelType: "prompt", index: 1 },    //  Aguarde
-                    { modelId: "5e3debc97cedaf26245a3699", modelType: "plugin", index: 2 }],   //  Transfere de acordo com regras de dados do metadata
-
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "businessRule", index: 2 }],   //  Transfere de acordo com regras de dados do metadata
                 version: 0.1,
                 active: true,
                 process: false,
-
             })
 
             let Dialog7 = new DialogModel({
-
                 name: 'Despedida',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
-
                 itemsList: [
                     { modelId: "5e3debc97cedaf26245a3699", modelType: "prompt", index: 1 },    //  Despedida.wav
-                    { modelId: "5e3debc97cedaf26245a3699", modelType: "plugin", index: 2 }],   //  Goodbye plugin
-
+                    { modelId: "5e3debc97cedaf26245a3699", modelType: "businessRule", index: 2 }],   //  Goodbye Core plugin
                 version: 0.1,
                 active: true,
                 process: false,
-
             })
-
-
-            //console.log(Dialog.name)
 
             Dialog.save()
                 .then(doc => {
-                    //console.log(doc)
-                    console.log(`Dialog de teste ${Dialog.name} salvo`)
+                    console.log(doc)
+                    //console.log(`Dialog de teste ${Dialog.name} salvo`)
                 })
                 .catch(err => {
                     console.error(err)
                 })
+            Dialog1.save()
             Dialog2.save()
             Dialog3.save()
             Dialog4.save()
@@ -224,7 +213,7 @@ app.listen(3000, function () {
             })
 
             let Prompt5 = new PromptModel({
-                name: `Aguarde Transferencia`,
+                name: `AguardeTransferencia`,
                 content: [{ value: 'Você está sendo direcionado para um de nossos consultores. Por favor, aguarde.' }],
                 files: [{ filename: 'Aguarde.wav' }]
             })
@@ -234,7 +223,6 @@ app.listen(3000, function () {
                 content: [{ value: 'Seu plano foi alterado com sucesso. Obrigado por entrar em contato conosco. Até logo!' }],
                 files: [{ filename: 'Despedida.wav' }]
             })
-
 
             Prompt.save()
                 .then(doc => {
@@ -290,18 +278,6 @@ app.listen(3000, function () {
             })
 
             let Plugin3 = new PluginModel({
-                name: `HUB SaveMetadata`,
-                description: 'Classe de Plugin que sa dos dados na sessao (redis)',
-                pluginWorker: {
-                    name: 'MetadataManager',
-                    pluginMethods: [{
-                        name: 'SaveMetadata',
-                        description: 'Salva uma informação na sessão para ser usada posteriormente em outro Dialog'
-                    }]
-                }
-            })
-
-            let Plugin4 = new PluginModel({
                 name: `Caller Info Manager`,
                 description: 'Recupera informações da chamada de voz como VDN de entrada, ANI, HEADERS, etc...',
                 pluginWorker: {
@@ -314,18 +290,6 @@ app.listen(3000, function () {
             })
 
             let Plugin5 = new PluginModel({
-                name: `HUB LeadManager`,
-                description: 'Manager de LEADS que são gerados durante a experiênci do usuário',
-                pluginWorker: {
-                    name: 'LeadManager',
-                    pluginMethods: [{
-                        name: 'Save',
-                        description: 'Retorna os dados da chamada'
-                    }]
-                }
-            })
-
-            let Plugin6 = new PluginModel({
                 name: `Voice Call Transfer`,
                 description: 'Transferência de chamadas',
                 pluginWorker: {
@@ -337,7 +301,7 @@ app.listen(3000, function () {
                 }
             })
 
-            let Plugin7 = new PluginModel({
+            let Plugin6 = new PluginModel({
                 name: `Goodbye`,
                 description: 'Salva informações da experiência recente do usuário',
                 pluginWorker: {
@@ -363,7 +327,6 @@ app.listen(3000, function () {
             Plugin4.save()
             Plugin5.save()
             Plugin6.save()
-            Plugin7.save()
 
             res.end(``)
 
@@ -376,37 +339,27 @@ app.listen(3000, function () {
 
             const BusinessRuleModel = require('./core/database/models/mongoose/BusinessRule')
 
-
-
             let BusinessRule = new BusinessRuleModel({
-
                 channelId: "5e3a45f04f0fe914407c316a",
-                name: `Obter Dados Chamador`,
+                name: `Obter Dados Chamador VOIP`,
                 type: 'integration',
                 class: '5e3b25b55aa36d112c208b25',
                 method: '5e3b1d36922477484406cc69',
                 inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',    //  ctiport
-                    modeltype: 'dialog'
-                }, {
-                    modelId: '5e3b0234e389162f5835e761',     //  param.voice.pauseGoto
-                    modeltype: 'parameter'
+                    modelId: null,    //  sipChannel
+                    modeltype: 'query',
                 }],
-
-                description: "Criar um redirecionamento para outro Dialog respeitando o parametro com o tempo a ser aguardado antes do redirecionamento.",
-                example: "Aguardar 5 segundos antes de direcionar para o próximo Dialog (Voice) <break time='1.5s'/>",
+                description: "Identificar os dados do chamador através do sip channel. Em caso de erro, direciona para Transfer. Sucesso prossegue para Saudação.",
+                example: "Consultar dados do usuário no SIP CHANEL#21614 para identificar o ANI.",
                 output: {
-                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  user.ani 
+                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  voip.ani 
                 },
                 integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Transfer
                 integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  Saudação
-
-                expiration: 1000
-
+                expires: 1000
             })
 
-            let BusinessRule0 = new BusinessRuleModel({
-
+            let BusinessRule1 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `Redirect To Dialog (Voice)`,
                 type: 'plugin',
@@ -419,15 +372,12 @@ app.listen(3000, function () {
                     modelId: '5e3b0234e389162f5835e761',     //  param.voice.pauseGoto
                     modeltype: 'parameter'
                 }],
-
                 description: "Criar um redirecionamento para outro Dialog respeitando o parametro com o tempo a ser aguardado antes do redirecionamento.",
                 example: "Aguardar 5 segundos antes de direcionar para o próximo Dialog (Voice) <break time='1.5s'/>",
-                expiration: 1000
-
+                expires: 1000
             })
 
-            let BusinessRule1 = new BusinessRuleModel({
-
+            let BusinessRule2 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `Saudacao (Voice)`,
                 type: 'plugin',
@@ -437,16 +387,13 @@ app.listen(3000, function () {
                     modelId: '5e3b0234e389162f5835e761',
                     modeltype: 'parameter'  //  param.dataHoje
                 }],
-
                 description: "Validar o horario da requisicao de acordo com a data passada no parametro",
                 example: "Entre 00:00 e 11:59 'bomdia.wav' / 12:00 e 17:59 'boatarde.wav' / 18:00 e 23:59 'boanoite.wav'",
-                expiration: 1000
-
+                expires: 1000
             })
 
-            let BusinessRule2 = new BusinessRuleModel({
-
-                channelId: "5e3a45f04f0fe914407c316a",
+            let BusinessRule3 = new BusinessRuleModel({
+                channelId: "5e3a45f04f0fe914407c316a",  //  OMNI
                 name: `Integração Inicial Siebel`,
                 type: 'integration',
                 class: '5e3b25b55aa36d112c208b25',
@@ -455,7 +402,6 @@ app.listen(3000, function () {
                     modelId: '5e3b0234e389162f5835e761',    // user.ani
                     modeltype: 'datapath'
                 }],
-
                 description: "Consulta dados do usuário através do ANI.",
                 example: "ANI = 5521999797799",
                 output: {
@@ -465,13 +411,10 @@ app.listen(3000, function () {
                 },
                 integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Transfer
                 integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  MenuOfertas
-
-                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
-
+                expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
 
-            let BusinessRule3 = new BusinessRuleModel({
-
+            let BusinessRule4 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `MenuOfertas (Voice)`,
                 type: 'plugin',
@@ -481,42 +424,32 @@ app.listen(3000, function () {
                     modelId: '5e3b0234e389162f5835e761',    //  ani.tipoPlano
                     modeltype: 'datapath'
                 }],
-
                 description: "Ofertar mudanca de planos diferentes do que o usuário já possui.",
                 example: "Se usuário = PRE ofertar POS e COTROLE (ofertaPosPagoEControle.wav); Se usuário = POS ofertar PRE e CONTROLE (ofertaPrePagoEControle.wav); Se usuário = CONTROLE ofertar PRE e POS (ofertaPrePagoEPosPago.wav).",
-                expiration: 1000
-
+                expires: 1000
             })
 
-            let BusinessRule4 = new BusinessRuleModel({
-
-                channelId: "5e3a45f04f0fe914407c316a",
+            let BusinessRule5 = new BusinessRuleModel({
+                channelId: "5e3a45f04f0fe914407c316a",  //  OMNI
                 name: `AlteraPlanoCelular`,
                 type: 'integration',
                 class: '5e3b25b55aa36d112c208b25',
                 method: '5e3b1d36922477484406cc69',
                 inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',    // user.ani para solicitar a mudança no plano
+                    modelId: '5e3b0234e389162f5835e761',    // voip.ani para solicitar a mudança no plano
                     modeltype: 'datapath'
                 }],
-
-                description: "Altera o plano do usuário de acordo com a opcao selecionada no MenuOfertas 'PRE', 'POS' ou 'CONTROLE'." +
-                    "Requer uma option preenchida com PRE/POS/CONTROLE, selecionada no MenuOfertas.",
-                example: "Usuário Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. " +
-                    "A opcao selecionada sera recebida via queryParameter. Opções : " +
-                    "PRE / POS / CONTROLE",
+                description: "Altera o plano do usuário de acordo com a opção selecionada no MenuOfertas 'PRE', 'POS' ou 'CONTROLE'. Requer uma queryParameter preenchida com 'PRE', 'POS', ou 'CONTROLE'. Selecionada no MenuOfertas.",
+                example: "Usuário Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. ",
                 output: {
                     dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }, { _id: '5e3b138185e02b46b82cec6f' }] //  alteraPlano.failed = true/false, alteraPlano.resultMsg = retorno da integração
                 },
                 integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Transfer
-                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  OfertaPromoMaes2020
-
-                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
-
+                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  OfertaPromoMaes
+                expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
 
-            let BusinessRule5 = new BusinessRuleModel({
-
+            let BusinessRule6 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `Oferta  de Promoção`,
                 type: 'plugin',
@@ -524,27 +457,23 @@ app.listen(3000, function () {
                 method: 'inPromoRangeAndOneDataPath',
                 inputList: [{
                     modelId: '',
-                    modeltype: 'parameter'  //  param.dataPromoMaes2020
+                    modeltype: 'parameter'  //  param.dataPromoMaes
                 }, {
                     modelId: '',
                     modeltype: 'datapath'   //  md.alteraPlano.novoPlano
                 }],
-
-                description: `Verifica se a data atual está dentro do período informado pelo parametro da promoção do dia das Maes 2020 e se o usuário pediu alteração para 'CONTROLE' no MenuOfertas. ` +
-                    `Se sim, encaminha para MenuOfertaProomMaes2020. O valor do parametro deve ser '10/05/2020_00:00:00 10/06/2020_23:59:59'.`,
+                description: `Verifica se a data atual está dentro do período informado pelo parametro da promoção do dia das Maes e se o usuário pediu alteração para 'CONTROLE' no MenuOfertas. ` +
+                    `Se sim, encaminha para MenuOfertaProomMaes. O valor do parametro deve ser '10/05/2020_00:00:00 10/06/2020_23:59:59'.`,
                 example: "Se data atual estiver dentro do periodo informado no parametro retorna metadata com valor 'true'",
                 output: {
-                    dataPathList: [{ metadataPathId: 'md.promoMaes2020.ativa' }]
+                    dataPathList: [{ metadataPathId: 'md.promoMaes.ativa' }]
                 },
                 integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Despedida
                 integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  MenuOfertaPromoMaes2020
-
-                expiration: 1000
-
+                expires: 1000
             })
 
-            let BusinessRule6 = new BusinessRuleModel({
-
+            let BusinessRule7 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `M4U - AdesaoPromoMaes`,
                 type: 'integration',
@@ -554,7 +483,6 @@ app.listen(3000, function () {
                     modelId: '5e3b0234e389162f5835e761',    // user.ani
                     modeltype: 'datapath'
                 }],
-
                 description: "Solicita adesão para promoção do Dia das Mães 2020 através do ANI, conforme documentação. O usuário deve ser do tipo CONTROLE.",
                 example: "Usuário solicita adesão para a promoção do Dia Das Mães 2020, que será definida dentro do período informado em parâmetro. Ex: 01/01/2020 00:00:00 15/01/2020 23:59:59",
                 output: {
@@ -562,13 +490,23 @@ app.listen(3000, function () {
                 },
                 integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Transfer
                 integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  DespedidaPromoMaes2020
-
-                expiration: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
-
+                expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
 
-
-            //console.log(Dialog.name)
+            let BusinessRule8 = new BusinessRuleModel({
+                channelId: "5e3a45f04f0fe914407c316a",
+                name: `Goodbye`,
+                type: 'plugin',
+                class: '5e3b25b55aa36d112c208b25',  //  Goodbye
+                method: '5e3b1d36922477484406cc69', //  SaveInfo
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',    //  lead.voip.{number}.hangup.date
+                    modeltype: 'lead'
+                }],
+                description: "Salvar o horário da finalização do atendimento desse usuário em LEAD.",
+                example: "Salvar a data atual no LEAD.",
+                expires: 1000
+            })
 
             BusinessRule.save()
                 .then(doc => {
@@ -579,14 +517,14 @@ app.listen(3000, function () {
                     console.error(err)
                 })
 
-            BusinessRule0.save()
             BusinessRule1.save()
             BusinessRule2.save()
             BusinessRule3.save()
             BusinessRule4.save()
             BusinessRule5.save()
             BusinessRule6.save()
-
+            BusinessRule7.save()
+            BusinessRule8.save()
 
             res.end(``)
 
@@ -599,12 +537,12 @@ app.listen(3000, function () {
 
             const DataPathModel = require('./core/database/models/mongoose/DataPath')
             let DataPath = new DataPathModel({
-                path: `user.ani.tipoPlano`,
+                path: `voip.ani.tipoPlano`,
                 description: "Tipo de plano do ANI (PRE, POS ou CONTROLE)",
             })
 
             let DataPath1 = new DataPathModel({
-                path: `user.ani.number`,
+                path: `voip.ani`,
                 description: "Numero do celular identificado automaticamente (ANI)",
             })
 
@@ -613,44 +551,52 @@ app.listen(3000, function () {
                 description: "Controle de falha na chamada da Integração Inicial (SIEBEL)",
             })
 
-            let DataPath8 = new DataPathModel({
+            let DataPath3 = new DataPathModel({
                 path: `nav.voiceChannel.pauseGoto`,
                 description: "Tempo de espera antes de redirecionar para outro Dialog (Voice.)",
             })
 
-            let DataPath3 = new DataPathModel({
+            let DataPath4 = new DataPathModel({
                 path: `md.alteraPlano.novoPlano`,   // POS / PRE / CONTROLE
                 description: "Plano selecionado pelo usuário no MenuOfertas",
             })
 
-            let DataPath4 = new DataPathModel({
+            let DataPath5 = new DataPathModel({
                 path: `md.alteraPlano.resultCode`,
                 description: "Codigp de retorno da solicitacao de mudança de plano do MenuOfertas.",
             })
 
-            let DataPath5 = new DataPathModel({
+            let DataPath6 = new DataPathModel({
                 path: `md.alteraPlano.resultMsg`,
                 description: "Mensagem de retorno da solicitacao de mudança de plano do MenuOfertas.",
             })
 
-            let DataPath6 = new DataPathModel({
+            let DataPath7 = new DataPathModel({
+                path: `md.promoMaes.ativa`,
+                description: "Resultado da validação de Promoção do Dia das Mães.",
+            })
+
+            let DataPath8 = new DataPathModel({
+                path: `md.adesaoPromoMaes.failed`,
+                description: "Resulado da chamada para adesão da promoção do Dia das Mães (M4U)",
+            })
+
+            let DataPath9 = new DataPathModel({
                 path: `param.dataHoje`,
                 description: "Parametro que simula uma data diferente da atual",
                 paramValue: '01/01/2021'
             })
 
-            let DataPath7 = new DataPathModel({
+            let DataPath10 = new DataPathModel({
                 path: `param.periodoPromoMaes`,
                 description: "Período de atividade da Promoção de Dia das Mães. Ex: ",
                 paramValue: '01/05/2020_00:00:00 15/05/2020_23:59:59'
             })
 
-            let DataPath8 = new DataPathModel({
+            let DataPath11 = new DataPathModel({
                 path: `param.voiceChannel.pauseGoto`,
                 description: "Tempo de espera antes de redirecionar para outro Dialog (Voice.)",
             })
-
-
 
             DataPath.save()
                 .then(doc => {
@@ -669,6 +615,9 @@ app.listen(3000, function () {
             DataPath6.save()
             DataPath7.save()
             DataPath8.save()
+            DataPath9.save()
+            DataPath10.save()
+            DataPath11.save()
 
             res.end(``)
 
@@ -681,6 +630,18 @@ app.listen(3000, function () {
 
             const IntegrationModel = require('./core/database/models/mongoose/Integration')
             let Integration = new IntegrationModel({
+                name: `Voip Integration`,
+                shortname: 'voip',  //  10 chars no maximo
+                description: "Integração para obter dados da rede voip",
+                integrationManager: {
+                    name: "VoipManager",
+                    endpoints: [{
+                        name: "AdesaoPromoMaes",
+                        description: "Requer o numero do celular do usuário e cadastra na promoção do Dia das Mães."
+                    }]
+                }
+            })
+            let Integration1 = new IntegrationModel({
                 name: `Parametros Oi`,
                 shortname: 'param',  //  10 chars no maximo
                 description: "Integração que gerencia os parametros de navegação da aplicação. Ex: dataInicioPromocao, horaInicioAtendimento, etc...",
@@ -693,7 +654,7 @@ app.listen(3000, function () {
                 }
             })
 
-            let Integration1 = new IntegrationModel({
+            let Integration2 = new IntegrationModel({
                 name: `Siebel`,
                 shortname: 'siebel',  //  10 chars no maximo
                 description: "Integração que gerencia os planos de celular e retorna dados do usuario",
@@ -709,7 +670,7 @@ app.listen(3000, function () {
                 }
             })
 
-            let Integration2 = new IntegrationModel({
+            let Integration3 = new IntegrationModel({
                 name: `M4U`,
                 shortname: 'm4u',  //  10 chars no maximo
                 description: "Automações M4U",
@@ -721,20 +682,6 @@ app.listen(3000, function () {
                     }]
                 }
             })
-
-            let Integration2 = new IntegrationModel({
-                name: `M4U`,
-                shortname: 'm4u',  //  10 chars no maximo
-                description: "Automações M4U",
-                integrationManager: {
-                    name: "M4UManager",
-                    endpoints: [{
-                        name: "AdesaoPromoMaes",
-                        description: "Requer o numero do celular do usuário e cadastra na promoção do Dia das Mães."
-                    }]
-                }
-            })
-
 
             Integration.save()
                 .then(doc => {
@@ -747,6 +694,7 @@ app.listen(3000, function () {
 
             Integration1.save()
             Integration2.save()
+            Integration3.save()
             res.end(``)
 
         }),

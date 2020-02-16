@@ -11,7 +11,7 @@ let BusinessRuleSchema = new mongoose.Schema({
     method: mongoose.Schema.Types.ObjectId,
     inputList: [{
         modelId: mongoose.Schema.Types.ObjectId,
-        modeltype: String
+        modeltype: String   //  dialog/parameter/datapath/query
     }],
     description: String,
     example: String,
@@ -22,7 +22,7 @@ let BusinessRuleSchema = new mongoose.Schema({
     //modeltype: "BusinessRule",   // Identificador do tipo de objeto parent (diferenciando metadataPath e dataPath)
     integrationFaultDialog:mongoose.Schema.Types.ObjectId,
     integrationSuccessDialog:mongoose.Schema.Types.ObjectId,
-    expiration: Number    //  controla quando a regra deve ser revalidada e atualizada no redis
+    expires: Number    //  controla quando a regra deve ser revalidada e atualizada no redis
 
 });
 
