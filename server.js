@@ -36,8 +36,9 @@ app.listen(3000, function () {
         app.get('/hub/helper/lead/:lead', (req, res) => {
             const LeadModel = require('./core/database/models/mongoose/Lead')
             let Lead = new LeadModel({
-                path: `lead.voip.{ani}.hangup.date`,
-                description: `Data do término do atendimento para esse usuário, nesse canal.`
+                path: `lead.voip.{ani}.hangup.{timestamp}`,
+                description: `Data do término do atendimento para esse usuário, nesse canal.`,
+
             });
             Lead.save()
         }),
@@ -170,13 +171,13 @@ app.listen(3000, function () {
             let Prompt = new PromptModel({
                 name: `Oi`,
                 content: [{ value: 'Oi!' }],
-                files: [{ filename: 'oi.wav' }]
+                files: [{ filename: 'Oi.wav' }]
             })
 
             let Prompt1 = new PromptModel({
                 name: `Saudacao`,
                 content: [{ value: 'Bom dia!' }, { value: 'Boa tarde!' }, { value: 'Boa noite!' }],
-                files: [{ filename: 'bomdia.wav' }, { filename: 'boatarde.wav' }, { filename: 'boanoite.wav' }],
+                files: [{ filename: 'Bomdia.wav' }, { filename: 'Boatarde.wav' }, { filename: 'Boanoite.wav' }],
                 businessrule: '5e3b24574b1f6736dc08dadd',
             })
 
@@ -198,12 +199,17 @@ app.listen(3000, function () {
 
             let Prompt4 = new PromptModel({
                 name: `MenuOfertas`,
+                logic: [
+                    { datapath: '5e48e0e2fc55ac3fe0532220', value: 'POS', index: 1 },   //  ani.tipoPlano
+                    { datapath: '5e48e0e2fc55ac3fe0532220', value: 'PRE', index: 2 },   //  ani.tipoPlano
+                    { datapath: '5e48e0e2fc55ac3fe0532220', value: 'CONTROLE', index: 3 },  //  ani.tipoPlano
+                ],
                 content: [
                     { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
                     { value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
                     { value: 'Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2. Para finalizar o atendimento, digite 3.' }
                 ],
-                files: [{ filename: 'ofertaPrePagoEControle.wav' }, { filename: 'ofertaPosPagoEControle.wav' }, { filename: 'ofertaPrePagoEPosPago.wav' }],
+                files: [{ filename: 'MenuOfertaPrePagoEControle.wav' }, { filename: 'MenuOfertaPosPagoEControle.wav' }, { filename: 'MenuOfertaPrePagoEPosPago.wav' }],
                 businessrule: '5e3cb7960d3c1e0290cb79df',
                 options: [
                     [{ value: '1', dialog: null, queryParam: 'PRE' }, { value: '2', dialog: null, queryParam: 'CONTROLE' }, { value: '3', dialog: null, queryParam: null }],
@@ -255,7 +261,19 @@ app.listen(3000, function () {
                 pluginWorker: {
                     name: 'Saudacao',
                     pluginMethods: [
-                        { name: 'saudacaoInicial', description: 'Retorna os prompts de bom dia, boa tarde ou boa noite e de acordo com o horario do dia passado via parametro' }]
+                        { name: 'SaudacaoInicial', description: 'Retorna os prompts de bom dia, boa tarde ou boa noite e de acordo com o horario do dia passado via parametro' }]
+                }
+            })
+
+            let Plugin1 = new PluginModel({
+                name: `Caller Info Manager`,
+                description: 'Recupera informações da chamada de voz como VDN de entrada, ANI, HEADERS, etc...',
+                pluginWorker: {
+                    name: 'CallerInfoManager',
+                    pluginMethods: [{
+                        name: 'obterDadosChamador',
+                        description: 'Retorna os dados da chamada'
+                    }]
                 }
             })
 
@@ -268,9 +286,6 @@ app.listen(3000, function () {
                         name: 'Goto',
                         description: 'Retorna uma tag vxml goto apontando para outro Dialog. <goto next="%HUB%/dialogs/BlackHole"/>'
                     }, {
-                        name: 'Play Recorded Audio',
-                        description: 'Retorna uma tag vxml com o prompt a ser tocado. <prompt src="%HUB%/dialogs/BlackHole/files/xyz.wav"/>'
-                    }, {
                         name: 'Play TTS Audio',
                         description: 'Gera tag vxml com texto a ser verbalizado.'
                     }]
@@ -278,18 +293,20 @@ app.listen(3000, function () {
             })
 
             let Plugin3 = new PluginModel({
-                name: `Caller Info Manager`,
-                description: 'Recupera informações da chamada de voz como VDN de entrada, ANI, HEADERS, etc...',
+                name: `Menu Creator`,
+                description: 'Saudacoes',
                 pluginWorker: {
-                    name: 'CallerInfoManager',
+                    name: 'MenuCreator',
                     pluginMethods: [{
-                        name: 'obterDadosChamador',
-                        description: 'Retorna os dados da chamada'
+                        name: 'OfferMenuByTipoPlano',
+                        description: 'Retorna os prompts de bom dia, boa tarde ou boa noite e de acordo com o horario do dia passado via parametro'
                     }]
                 }
             })
 
-            let Plugin5 = new PluginModel({
+
+
+            let Plugin4 = new PluginModel({
                 name: `Voice Call Transfer`,
                 description: 'Transferência de chamadas',
                 pluginWorker: {
@@ -301,7 +318,7 @@ app.listen(3000, function () {
                 }
             })
 
-            let Plugin6 = new PluginModel({
+            let Plugin5 = new PluginModel({
                 name: `Goodbye`,
                 description: 'Salva informações da experiência recente do usuário',
                 pluginWorker: {
@@ -322,11 +339,11 @@ app.listen(3000, function () {
                     console.error(err)
                 })
 
+            Plugin1.save()
             Plugin2.save()
             Plugin3.save()
             Plugin4.save()
             Plugin5.save()
-            Plugin6.save()
 
             res.end(``)
 
@@ -340,66 +357,63 @@ app.listen(3000, function () {
             const BusinessRuleModel = require('./core/database/models/mongoose/BusinessRule')
 
             let BusinessRule = new BusinessRuleModel({
-                channelId: "5e3a45f04f0fe914407c316a",
+                channelId: "5e476acecce4cd2860b9869d",  	//  Voice
                 name: `Obter Dados Chamador VOIP`,
                 type: 'integration',
-                class: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
+                class: '5e48c9fcca9e054250f264b8',  //  id da Voip Integration
+                method: '5e48c9fcca9e054250f264b9', //  endpoint da Integration
                 inputList: [{
                     modelId: null,    //  sipChannel
-                    modeltype: 'query',
+                    modeltype: 'query', //  recebe informação do sip channel via queryParameter
                 }],
                 description: "Identificar os dados do chamador através do sip channel. Em caso de erro, direciona para Transfer. Sucesso prossegue para Saudação.",
                 example: "Consultar dados do usuário no SIP CHANEL#21614 para identificar o ANI.",
                 output: {
-                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  voip.ani 
+                    dataPathList: [{ _id: '5e48d24b1c7b05319431b83b' }] //  voip.ani 
                 },
-                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Transfer
-                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  Saudação
+                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  TODO: Set Dialog Transfer
+                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  TODO: Set Dialog Saudacao
                 expires: 1000
             })
 
             let BusinessRule1 = new BusinessRuleModel({
-                channelId: "5e3a45f04f0fe914407c316a",
-                name: `Redirect To Dialog (Voice)`,
+                channelId: "5e476acecce4cd2860b9869d",  //  Voice
+                name: `Saudacao`,
                 type: 'plugin',
-                class: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
+                class: '5e3b25b55aa36d112c208b25',  //  TODO: Set Saudacao
+                method: '5e3b1d36922477484406cc69', //  TODO: Set SaudacaoInicial
                 inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',    //  MenuTriagem
-                    modeltype: 'dialog'
-                }, {
-                    modelId: '5e3b0234e389162f5835e761',     //  param.voice.pauseGoto
-                    modeltype: 'parameter'
-                }],
-                description: "Criar um redirecionamento para outro Dialog respeitando o parametro com o tempo a ser aguardado antes do redirecionamento.",
-                example: "Aguardar 5 segundos antes de direcionar para o próximo Dialog (Voice) <break time='1.5s'/>",
-                expires: 1000
-            })
-
-            let BusinessRule2 = new BusinessRuleModel({
-                channelId: "5e3a45f04f0fe914407c316a",
-                name: `Saudacao (Voice)`,
-                type: 'plugin',
-                class: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
-                inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',
-                    modeltype: 'parameter'  //  param.dataHoje
+                    modelId: '5e48e0e2fc55ac3fe053221c',    //  param.dataHoje
+                    modeltype: 'datapath'
                 }],
                 description: "Validar o horario da requisicao de acordo com a data passada no parametro",
                 example: "Entre 00:00 e 11:59 'bomdia.wav' / 12:00 e 17:59 'boatarde.wav' / 18:00 e 23:59 'boanoite.wav'",
                 expires: 1000
             })
 
+            let BusinessRule2 = new BusinessRuleModel({
+                channelId: "5e476acecce4cd2860b9869d",  //  Voice
+                name: `Redirect To Dialog`,
+                type: 'plugin',
+                class: '5e3b25b55aa36d112c208b25',  //  TODO: Set plugin Voice Tags
+                method: '5e3b1d36922477484406cc69', //  TODO: Set plugin method Goto
+                inputList: [{
+                    modelId: '5e3b0234e389162f5835e761',    //  TODO: Set Dialog MenuTriagem
+                    modeltype: 'dialog'
+                }],
+                description: "Criar um redirecionamento para outro Dialog aguardando 5 segundos antes de redirecionar.",
+                example: "Aguardar 5 segundos antes de direcionar para o próximo Dialog MenuTriagem.",
+                expires: 1000
+            })
+
             let BusinessRule3 = new BusinessRuleModel({
-                channelId: "5e3a45f04f0fe914407c316a",  //  OMNI
+                channelId: "5e488ca6c2d1d217e0ddbc69",  //  OMNI
                 name: `Integração Inicial Siebel`,
                 type: 'integration',
-                class: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
+                class: '5e48c9fcca9e054250f264bc',  //  Integracao Siebel
+                method: '5e48c9fcca9e054250f264be', //  Meteodo IntegracaoInicialSiebel
                 inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',    // user.ani
+                    modelId: '5e48e0e2fc55ac3fe053221b',    // user.ani
                     modeltype: 'datapath'
                 }],
                 description: "Consulta dados do usuário através do ANI.",
@@ -407,22 +421,31 @@ app.listen(3000, function () {
                 output: {
                     dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }, //  integracaoInicial.failed = true/false
                     { _id: '5e3b138185e02b46b82cec6f' },                //  integracaoInicial.userNotFound = true/false
-                    { _id: '5e3b138185e02b46b82cec6f' }]                //  user.ani.tipoPlano = retorno Integração campo tipoPlano
+                    { _id: '5e3b138185e02b46b82cec6f' }]                //  user.ani.tipoPlanoCelular = retorno Integração campo tipoPlano
                 },
-                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Transfer
-                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  MenuOfertas
+                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  TODO: Set DialogTransfer
+                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  TODO: Set Dialog MenuOfertas
                 expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
 
             let BusinessRule4 = new BusinessRuleModel({
-                channelId: "5e3a45f04f0fe914407c316a",
-                name: `MenuOfertas (Voice)`,
+                channelId: "5e476acecce4cd2860b9869d",  //  Voice
+                name: `MenuOfertas`,
                 type: 'plugin',
                 class: '5e3b25b55aa36d112c208b25',
                 method: '5e3b1d36922477484406cc69',
                 inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',    //  ani.tipoPlano
+                    modelId: '5e3b0234e389162f5835e761',    //  user.ani.tipoPlanoCelular
                     modeltype: 'datapath'
+                }, {
+                    modelId: '5e3b0234e389162f5835e761',    //  MenuOfertaPosPagoEControle.wav
+                    modeltype: 'prompt'
+                }, {
+                    modelId: '5e3b0234e389162f5835e761',    //  MenuOfertaPrePagoEControle.wav
+                    modeltype: 'prompt'
+                }, {
+                    modelId: '5e3b0234e389162f5835e761',    //  MenuOfertaPrePagoEPosPago.wav
+                    modeltype: 'prompt'
                 }],
                 description: "Ofertar mudanca de planos diferentes do que o usuário já possui.",
                 example: "Se usuário = PRE ofertar POS e COTROLE (ofertaPosPagoEControle.wav); Se usuário = POS ofertar PRE e CONTROLE (ofertaPrePagoEControle.wav); Se usuário = CONTROLE ofertar PRE e POS (ofertaPrePagoEPosPago.wav).",
@@ -536,9 +559,10 @@ app.listen(3000, function () {
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
             const DataPathModel = require('./core/database/models/mongoose/DataPath')
+
             let DataPath = new DataPathModel({
-                path: `voip.ani.tipoPlano`,
-                description: "Tipo de plano do ANI (PRE, POS ou CONTROLE)",
+                path: `md.obterDadosChamador.failed`,
+                description: "Controle de falha na Integração Voip para obter os dados do chamador",
             })
 
             let DataPath1 = new DataPathModel({
@@ -547,56 +571,67 @@ app.listen(3000, function () {
             })
 
             let DataPath2 = new DataPathModel({
+                path: `user.ani`,
+                description: "Numero que está sendo atendido, independente do canal.",
+            })
+
+            let DataPath3 = new DataPathModel({
+                path: `param.dataHoje`,
+                description: "Data a ser utilizada nos testes. Formato 01/05/2020 00:00:00",
+                paramValue: '01/05/2020 00:00:00'
+            })
+
+            let DataPath4 = new DataPathModel({
+                path: `nav.menuTriagemOp2`,
+                description: "Controle da opção digitada no MenuTriagem",
+            })
+
+            let DataPath5 = new DataPathModel({
                 path: `md.integracaoInicial.failed`,
                 description: "Controle de falha na chamada da Integração Inicial (SIEBEL)",
             })
 
-            let DataPath3 = new DataPathModel({
-                path: `nav.voiceChannel.pauseGoto`,
-                description: "Tempo de espera antes de redirecionar para outro Dialog (Voice.)",
-            })
-
-            let DataPath4 = new DataPathModel({
-                path: `md.alteraPlano.novoPlano`,   // POS / PRE / CONTROLE
-                description: "Plano selecionado pelo usuário no MenuOfertas",
-            })
-
-            let DataPath5 = new DataPathModel({
-                path: `md.alteraPlano.resultCode`,
-                description: "Codigp de retorno da solicitacao de mudança de plano do MenuOfertas.",
-            })
-
             let DataPath6 = new DataPathModel({
-                path: `md.alteraPlano.resultMsg`,
-                description: "Mensagem de retorno da solicitacao de mudança de plano do MenuOfertas.",
+                path: `md.integracaoInicial.userNotFound`,
+                description: "Validação do cliente não encontrado na base Siebel",
             })
 
             let DataPath7 = new DataPathModel({
-                path: `md.promoMaes.ativa`,
-                description: "Resultado da validação de Promoção do Dia das Mães.",
+                path: `user.ani.tipoPlanoCelular`,
+                description: "Tipo de plano do ANI (PRE, POS ou CONTROLE)",
             })
 
             let DataPath8 = new DataPathModel({
-                path: `md.adesaoPromoMaes.failed`,
-                description: "Resulado da chamada para adesão da promoção do Dia das Mães (M4U)",
+                path: `nav.alteraPlano.novoPlano`,
+                description: "Plano selecionado pelo usuário no MenuOfertas. 'POS', 'PRE' ou 'CONTROLE'",
             })
 
             let DataPath9 = new DataPathModel({
-                path: `param.dataHoje`,
-                description: "Parametro que simula uma data diferente da atual",
-                paramValue: '01/01/2021'
+                path: `md.alteraPlano.failed`,
+                description: "Controle de falha na solicitacao de mudança de plano do MenuOfertas.",
             })
 
             let DataPath10 = new DataPathModel({
+                path: `md.alteraPlano.responseMsg`,
+                description: "Mensagem de retorno da solicitacao de mudança de plano do MenuOfertas.",
+            })
+
+            let DataPath11 = new DataPathModel({
                 path: `param.periodoPromoMaes`,
                 description: "Período de atividade da Promoção de Dia das Mães. Ex: ",
                 paramValue: '01/05/2020_00:00:00 15/05/2020_23:59:59'
             })
 
-            let DataPath11 = new DataPathModel({
-                path: `param.voiceChannel.pauseGoto`,
-                description: "Tempo de espera antes de redirecionar para outro Dialog (Voice.)",
+            let DataPath12 = new DataPathModel({
+                path: `md.promoMaes.ativa`,
+                description: "Resultado da validação de Promoção do Dia das Mães via parametro param.periodoPromoMaes.",
             })
+
+            let DataPath13 = new DataPathModel({
+                path: `md.adesaoPromoMaes.failed`,
+                description: "Resultado da chamada para adesão da promoção do Dia das Mães (M4U)",
+            })
+
 
             DataPath.save()
                 .then(doc => {
@@ -618,6 +653,8 @@ app.listen(3000, function () {
             DataPath9.save()
             DataPath10.save()
             DataPath11.save()
+            DataPath12.save()
+            DataPath13.save()
 
             res.end(``)
 
@@ -632,12 +669,12 @@ app.listen(3000, function () {
             let Integration = new IntegrationModel({
                 name: `Voip Integration`,
                 shortname: 'voip',  //  10 chars no maximo
-                description: "Integração para obter dados da rede voip",
+                description: "Integração para interagir com a rede voip.",
                 integrationManager: {
                     name: "VoipManager",
                     endpoints: [{
-                        name: "AdesaoPromoMaes",
-                        description: "Requer o numero do celular do usuário e cadastra na promoção do Dia das Mães."
+                        name: "ObterDadosChamador",
+                        description: "Requer o SIP CHANNEL e retorna o ANI coorespondente na rede voip."
                     }]
                 }
             })
