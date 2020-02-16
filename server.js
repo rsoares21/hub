@@ -176,9 +176,13 @@ app.listen(3000, function () {
 
             let Prompt1 = new PromptModel({
                 name: `Saudacao`,
+                logic: [
+                    { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'dia', index: 1 },   //  md.turno
+                    { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'tarde', index: 2 },   //  md.turno
+                    { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'noite', index: 3 },  //  md.turno
+                ],
                 content: [{ value: 'Bom dia!' }, { value: 'Boa tarde!' }, { value: 'Boa noite!' }],
-                files: [{ filename: 'Bomdia.wav' }, { filename: 'Boatarde.wav' }, { filename: 'Boanoite.wav' }],
-                businessrule: '5e3b24574b1f6736dc08dadd',
+                files: [{ filename: 'Bomdia.wav' }, { filename: 'Boatarde.wav' }, { filename: 'Boanoite.wav' }]
             })
 
             let Prompt2 = new PromptModel({
@@ -210,7 +214,6 @@ app.listen(3000, function () {
                     { value: 'Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2. Para finalizar o atendimento, digite 3.' }
                 ],
                 files: [{ filename: 'MenuOfertaPrePagoEControle.wav' }, { filename: 'MenuOfertaPosPagoEControle.wav' }, { filename: 'MenuOfertaPrePagoEPosPago.wav' }],
-                businessrule: '5e3cb7960d3c1e0290cb79df',
                 options: [
                     [{ value: '1', dialog: null, queryParam: 'PRE' }, { value: '2', dialog: null, queryParam: 'CONTROLE' }, { value: '3', dialog: null, queryParam: null }],
                     [{ value: '1', dialog: null, queryParam: 'POS' }, { value: '2', dialog: null, queryParam: 'CONTROLE' }, { value: '3', dialog: null, queryParam: null }],
@@ -255,6 +258,8 @@ app.listen(3000, function () {
             console.log(`[${req.session.id}] ${welcomeMessage}`)
 
             const PluginModel = require('./core/database/models/mongoose/Plugin')
+
+            /*
             let Plugin = new PluginModel({
                 name: `Saudacao`,
                 description: 'Saudacoes',
@@ -263,9 +268,9 @@ app.listen(3000, function () {
                     pluginMethods: [
                         { name: 'SaudacaoInicial', description: 'Retorna os prompts de bom dia, boa tarde ou boa noite e de acordo com o horario do dia passado via parametro' }]
                 }
-            })
+            })*/
 
-            let Plugin1 = new PluginModel({
+            let Plugin = new PluginModel({
                 name: `Caller Info Manager`,
                 description: 'Recupera informações da chamada de voz como VDN de entrada, ANI, HEADERS, etc...',
                 pluginWorker: {
@@ -277,7 +282,7 @@ app.listen(3000, function () {
                 }
             })
 
-            let Plugin2 = new PluginModel({
+            let Plugin1 = new PluginModel({
                 name: `Voice Tags`,
                 description: 'Gera um apontamento vxml para um outro Dialog <goto next="%HUB%/dialogs/BlackHole"/>',
                 pluginWorker: {
@@ -292,21 +297,7 @@ app.listen(3000, function () {
                 }
             })
 
-            let Plugin3 = new PluginModel({
-                name: `Menu Creator`,
-                description: 'Saudacoes',
-                pluginWorker: {
-                    name: 'MenuCreator',
-                    pluginMethods: [{
-                        name: 'OfferMenuByTipoPlano',
-                        description: 'Retorna os prompts de bom dia, boa tarde ou boa noite e de acordo com o horario do dia passado via parametro'
-                    }]
-                }
-            })
-
-
-
-            let Plugin4 = new PluginModel({
+            let Plugin2 = new PluginModel({
                 name: `Voice Call Transfer`,
                 description: 'Transferência de chamadas',
                 pluginWorker: {
@@ -318,7 +309,7 @@ app.listen(3000, function () {
                 }
             })
 
-            let Plugin5 = new PluginModel({
+            let Plugin3 = new PluginModel({
                 name: `Goodbye`,
                 description: 'Salva informações da experiência recente do usuário',
                 pluginWorker: {
@@ -342,8 +333,6 @@ app.listen(3000, function () {
             Plugin1.save()
             Plugin2.save()
             Plugin3.save()
-            Plugin4.save()
-            Plugin5.save()
 
             res.end(``)
 
@@ -366,7 +355,7 @@ app.listen(3000, function () {
                     modelId: null,    //  sipChannel
                     modeltype: 'query', //  recebe informação do sip channel via queryParameter
                 }],
-                description: "Identificar os dados do chamador através do sip channel. Em caso de erro, direciona para Transfer. Sucesso prossegue para Saudação.",
+                description: "Identificar os dados do chamador através do sip channel. Em caso de erro, direciona para Transfer. Sucesso prossegue para Saudação. Requer queryParameter.",
                 example: "Consultar dados do usuário no SIP CHANEL#21614 para identificar o ANI.",
                 output: {
                     dataPathList: [{ _id: '5e48d24b1c7b05319431b83b' }] //  voip.ani 
@@ -379,12 +368,15 @@ app.listen(3000, function () {
             let BusinessRule1 = new BusinessRuleModel({
                 channelId: "5e476acecce4cd2860b9869d",  //  Voice
                 name: `Saudacao`,
-                type: 'plugin',
-                class: '5e3b25b55aa36d112c208b25',  //  TODO: Set Saudacao
-                method: '5e3b1d36922477484406cc69', //  TODO: Set SaudacaoInicial
+                type: 'prompt',
+                class: null,
+                method: null,
                 inputList: [{
                     modelId: '5e48e0e2fc55ac3fe053221c',    //  param.dataHoje
                     modeltype: 'datapath'
+                }, {
+                    modelId: '5e3b0234e389162f5835e761',    //  TODO: Set Prompt Saudacao
+                    modeltype: 'prompt'
                 }],
                 description: "Validar o horario da requisicao de acordo com a data passada no parametro",
                 example: "Entre 00:00 e 11:59 'bomdia.wav' / 12:00 e 17:59 'boatarde.wav' / 18:00 e 23:59 'boanoite.wav'",
@@ -419,11 +411,11 @@ app.listen(3000, function () {
                 description: "Consulta dados do usuário através do ANI.",
                 example: "ANI = 5521999797799",
                 output: {
-                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }, //  integracaoInicial.failed = true/false
-                    { _id: '5e3b138185e02b46b82cec6f' },                //  integracaoInicial.userNotFound = true/false
+                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }, //  md.integracaoInicial.failed = true/false
+                    { _id: '5e3b138185e02b46b82cec6f' },                //  md.integracaoInicial.userNotFound = true/false
                     { _id: '5e3b138185e02b46b82cec6f' }]                //  user.ani.tipoPlanoCelular = retorno Integração campo tipoPlano
                 },
-                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  TODO: Set DialogTransfer
+                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  TODO: Set Dialog Transfer
                 integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  TODO: Set Dialog MenuOfertas
                 expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
@@ -431,20 +423,14 @@ app.listen(3000, function () {
             let BusinessRule4 = new BusinessRuleModel({
                 channelId: "5e476acecce4cd2860b9869d",  //  Voice
                 name: `MenuOfertas`,
-                type: 'plugin',
-                class: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
+                type: 'prompt',
+                class: null,
+                method: null,
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    //  user.ani.tipoPlanoCelular
                     modeltype: 'datapath'
                 }, {
-                    modelId: '5e3b0234e389162f5835e761',    //  MenuOfertaPosPagoEControle.wav
-                    modeltype: 'prompt'
-                }, {
-                    modelId: '5e3b0234e389162f5835e761',    //  MenuOfertaPrePagoEControle.wav
-                    modeltype: 'prompt'
-                }, {
-                    modelId: '5e3b0234e389162f5835e761',    //  MenuOfertaPrePagoEPosPago.wav
+                    modelId: '5e3b0234e389162f5835e761',    //  MenuOfertas
                     modeltype: 'prompt'
                 }],
                 description: "Ofertar mudanca de planos diferentes do que o usuário já possui.",
@@ -456,43 +442,44 @@ app.listen(3000, function () {
                 channelId: "5e3a45f04f0fe914407c316a",  //  OMNI
                 name: `AlteraPlanoCelular`,
                 type: 'integration',
-                class: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
+                class: '5e48c9fcca9e054250f264bc',  //  Integração Siebel
+                method: '5e48c9fcca9e054250f264bd', //  AlteraPlanoCelular
                 inputList: [{
-                    modelId: '5e3b0234e389162f5835e761',    // voip.ani para solicitar a mudança no plano
+                    modelId: '5e48e0e2fc55ac3fe053221b',    // user.ani para solicitar a mudança no plano
                     modeltype: 'datapath'
+                },{
+                    modelId: null,    // user.ani para solicitar a mudança no plano
+                    modeltype: 'query'  //  novo plano de celular escolhido pelo usuario
                 }],
                 description: "Altera o plano do usuário de acordo com a opção selecionada no MenuOfertas 'PRE', 'POS' ou 'CONTROLE'. Requer uma queryParameter preenchida com 'PRE', 'POS', ou 'CONTROLE'. Selecionada no MenuOfertas.",
                 example: "Usuário Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. ",
                 output: {
-                    dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }, { _id: '5e3b138185e02b46b82cec6f' }] //  alteraPlano.failed = true/false, alteraPlano.resultMsg = retorno da integração
+                    dataPathList: [{ _id: '5e48e0e2fc55ac3fe0532222' }, { _id: '5e48e0e2fc55ac3fe0532223' }] //  md.alteraPlano.failed = true/false, md.alteraPlano.responseMsg = retorno da integração
                 },
-                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Transfer
-                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  OfertaPromoMaes
+                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  TODO: Set Dialog Transfer
+                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  TODO: Set Dialog OfertaPromoMaes
                 expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
 
             let BusinessRule6 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",
-                name: `Oferta  de Promoção`,
+                name: `Oferta de Promoção Dia das Mães`,
                 type: 'plugin',
-                class: 'OfertaPromocao',
-                method: 'inPromoRangeAndOneDataPath',
+                class: '5e48c9fcca9e054250f264ba',  //  Fazer o plugin de leitura do Parametros Oi 
+                method: '5e48c9fcca9e054250f264bb',
                 inputList: [{
-                    modelId: '',
-                    modeltype: 'parameter'  //  param.dataPromoMaes
+                    modelId: '5e48e0e2fc55ac3fe0532224',    //  param.periodoPromoMaes
+                    modeltype: 'parameter'
                 }, {
-                    modelId: '',
-                    modeltype: 'datapath'   //  md.alteraPlano.novoPlano
+                    modelId: '5e48e0e2fc55ac3fe0532221',    //  nav.alteraPlano.novoPlano
+                    modeltype: 'datapath'
                 }],
                 description: `Verifica se a data atual está dentro do período informado pelo parametro da promoção do dia das Maes e se o usuário pediu alteração para 'CONTROLE' no MenuOfertas. ` +
                     `Se sim, encaminha para MenuOfertaProomMaes. O valor do parametro deve ser '10/05/2020_00:00:00 10/06/2020_23:59:59'.`,
                 example: "Se data atual estiver dentro do periodo informado no parametro retorna metadata com valor 'true'",
                 output: {
-                    dataPathList: [{ metadataPathId: 'md.promoMaes.ativa' }]
+                    dataPathList: [{ _id: '5e48e0e2fc55ac3fe0532225' }] //  md.promoMaes.ativa
                 },
-                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Despedida
-                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  MenuOfertaPromoMaes2020
                 expires: 1000
             })
 
@@ -632,6 +619,11 @@ app.listen(3000, function () {
                 description: "Resultado da chamada para adesão da promoção do Dia das Mães (M4U)",
             })
 
+            let DataPath14 = new DataPathModel({
+                path: `md.turno`,
+                description: "Preenchido com 'dia', 'tarde' ou 'noite'. De acordo com a hora do dia informada.",
+            })
+
 
             DataPath.save()
                 .then(doc => {
@@ -655,6 +647,7 @@ app.listen(3000, function () {
             DataPath11.save()
             DataPath12.save()
             DataPath13.save()
+            DataPath14.save()
 
             res.end(``)
 

@@ -6,7 +6,7 @@ let PromptSchema = new mongoose.Schema({
     logic: [{ datapath: mongoose.Schema.Types.ObjectId, value: String, index: Number }],
     content: [{ value: String }],  //  Conteudo legivel do prompt
     files: [{ filename: String }],  //  Nome da midia, Ex: bomdia.wav (Voice Channel)
-    businessrule: mongoose.Schema.Types.ObjectId,
+    //businessrule: mongoose.Schema.Types.ObjectId,
     options: [[{
         value: String, //  Prenchimento que será tratada Ex: "1" ou "sim"
         dialog: mongoose.Schema.Types.ObjectId,  //  Dialog ou Processo destino da opção selecionada
