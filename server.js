@@ -197,29 +197,29 @@ app.listen(3000, function () {
             })
 
             let Prompt1 = new PromptModel({
-                name: `Saudacao`,
+                name: `Saudacao Inicial`,
                 logic: [
                     { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'dia', index: 1 },   //  md.system.turno
                     { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'tarde', index: 2 },   //  md.system.turno
                     { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'noite', index: 3 },  //  md.system.turno
                 ],
-                syncContent: [{ value: 'Bom dia!' }, { value: 'Boa tarde!' }, { value: 'Boa noite!' }],
-                //asyncContent: [{ value: 'Bom dia!' }, { value: 'Boa tarde!' }, { value: 'Boa noite!' }],
-                files: [{ filename: 'Bomdia.wav' }, { filename: 'Boatarde.wav' }, { filename: 'Boanoite.wav' }]
+                syncContent: [{ value: 'Bom dia!', index: 1 }, { value: 'Boa tarde!', index: 2 }, { value: 'Boa noite!', index: 3 }],
+                //asyncContent: [{ value: 'Bom dia!', index: 1 }, { value: 'Boa tarde!', index: 2 }, { value: 'Boa noite!', index: 3 }],
+                files: [{ filename: 'Bomdia.wav', index: 1 }, { filename: 'Boatarde.wav', index: 2 }, { filename: 'Boanoite.wav', index: 3 }]
             })
 
             let Prompt2 = new PromptModel({
                 name: `BemVindoTriagem`,
-                syncContent: [{ value: 'Bem vindo ao nosso Hub!' }],
-                //asyncContent: [{ value: 'Bem vindo ao nosso Hub!' }],
-                files: [{ filename: 'Bemvindo.wav' }]
+                syncContent: [{ value: 'Bem vindo ao nosso Hub!', index: 1 }],
+                //asyncContent: [{ value: 'Bem vindo ao nosso Hub!', index: 1 }],
+                files: [{ filename: 'Bemvindo.wav', index: 1 }]
             })
 
             let Prompt3 = new PromptModel({
                 name: `MenuTriagem`,
-                syncContent: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
+                syncContent: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.', index: 1 }],
                 //asyncContent: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
-                files: [{ filename: 'MenuTriagem.wav' }],
+                files: [{ filename: 'MenuTriagem.wav', index: 1 }],
                 options: [
                     [{ value: '1', dialog: null, queryParam: null, leadIds: null },     //  ConsultaInicialSiebel
                     { value: '2', dialog: null, queryParam: null, leadIds: '5e3b24574b1f6736dc08dadd' }],    //  dialog Transfer , lead #01
@@ -234,16 +234,16 @@ app.listen(3000, function () {
                     { datapath: '5e48e0e2fc55ac3fe0532220', value: 'CONTROLE', index: 3 },  //  user.ani.tipoPlano
                 ],
                 syncContent: [
-                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
-                    { value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
-                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2. Para finalizar o atendimento, digite 3.' }
+                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.', index: 1 },
+                    { value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.', index: 2 },
+                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2. Para finalizar o atendimento, digite 3.', index: 3 }
                 ],
                 /*asyncContent: [
-                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
-                    { value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
-                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2. Para finalizar o atendimento, digite 3.' }
+                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.', index: 1 },
+                    { value: 'Para contratar Pós Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.', index: 2 },
+                    { value: 'Para contratar Pré Pago, digite 1. Para contratar Pós Pago, digite 2. Para finalizar o atendimento, digite 3.', index: 3 }
                 ],*/
-                files: [{ filename: 'MenuOfertaPrePagoEControle.wav' }, { filename: 'MenuOfertaPosPagoEControle.wav' }, { filename: 'MenuOfertaPrePagoEPosPago.wav' }],
+                files: [{ filename: 'MenuOfertaPrePagoEControle.wav', index: 1 }, { filename: 'MenuOfertaPosPagoEControle.wav', index: 2 }, { filename: 'MenuOfertaPrePagoEPosPago.wav', index: 3 }],
                 options: [
                     [{ value: '1', dialog: null, queryParam: 'PRE' }, { value: '2', dialog: null, queryParam: 'CONTROLE' }, { value: '3', dialog: null, queryParam: null }],
                     [{ value: '1', dialog: null, queryParam: 'POS' }, { value: '2', dialog: null, queryParam: 'CONTROLE' }, { value: '3', dialog: null, queryParam: null }],
@@ -253,16 +253,16 @@ app.listen(3000, function () {
 
             let Prompt5 = new PromptModel({
                 name: `AguardeTransferencia`,
-                syncContent: [{ value: 'Você está sendo direcionado para um de nossos consultores. Por favor, aguarde.' }],
-                asyncContent: [{ value: 'Registramos o seu contato e vamos responder em breve. Por favor, aguarde.' }],
-                files: [{ filename: 'Aguarde.wav' }]
+                syncContent: [{ value: 'Você está sendo direcionado para um de nossos consultores. Por favor, aguarde.', index: 1 }],
+                asyncContent: [{ value: 'Registramos o seu contato e vamos responder em breve. Por favor, aguarde.', index: 1 }],
+                files: [{ filename: 'Aguarde.wav', index: 1 }]
             })
 
             let Prompt6 = new PromptModel({
                 name: `Despedida`,
-                syncContent: [{ value: 'Seu plano foi alterado com sucesso. Obrigado por entrar em contato conosco. Até logo!' }],
+                syncContent: [{ value: 'Seu plano foi alterado com sucesso. Obrigado por entrar em contato conosco. Até logo!', index: 1 }],
                 //asyncContent: [{ value: 'Seu plano foi alterado com sucesso. Obrigado por entrar em contato conosco. Até logo!' }],
-                files: [{ filename: 'Despedida.wav' }]
+                files: [{ filename: 'Despedida.wav', index: 1 }]
             })
 
             Prompt.save()
@@ -432,13 +432,13 @@ app.listen(3000, function () {
             })
 
             let BusinessRule2 = new BusinessRuleModel({
-                name: `Saudacao`,
+                name: `Saudacao Inicial Dinãmica`,
                 type: 'prompt',
                 typeId: '', //  TODO: id Prompt Saudacao
                 method: null,
-                inputList: [],
-                description: "Tratamento de saudação de acordo com a hora do dia 00:00 e 11:59 / 12:00 e 17:59 / 18:00 e 23:59",
-                example: "Entre 00:00 e 11:59 'bomdia.wav' / 12:00 e 17:59 'boatarde.wav' / 18:00 e 23:59 'boanoite.wav'",
+                inputList: [],  //  prompts dinamicos ja possuem os inputs para executar as condições.
+                description: "Tratamento de saudação de acordo com a hora do dia : 00:00 ate 11:59 = 'Bom dia!'/ 12:00 ate 17:59 = 'Boa tarde!' / 18:00 ate 23:59 = 'Boa noite!'",
+                example: "Se horario da requisição = 9h da manhã, retorna prompt de 'Bom dia!'",
                 expires: 1000
             })
 
