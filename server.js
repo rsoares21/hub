@@ -51,6 +51,7 @@ app.listen(3000, function () {
             const DialogModel = require('./core/database/models/mongoose/Dialog')
             let Dialog = new DialogModel({
                 name: 'ObterDadosChamador',
+                description:'',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
                 itemsList: [
@@ -62,6 +63,7 @@ app.listen(3000, function () {
 
             let Dialog1 = new DialogModel({
                 name: 'Saudacao',
+                description:'',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e476acecce4cd2860b9869d',
                 itemsList: [
@@ -75,6 +77,7 @@ app.listen(3000, function () {
 
             let Dialog2 = new DialogModel({
                 name: 'MenuTriagem',
+                description:'',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
                 itemsList: [
@@ -87,6 +90,7 @@ app.listen(3000, function () {
 
             let Dialog3 = new DialogModel({
                 name: 'ConsultaInicialSiebel',
+                description:'',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
                 itemsList: [
@@ -98,6 +102,7 @@ app.listen(3000, function () {
 
             let Dialog4 = new DialogModel({
                 name: 'MenuOfertas',
+                description:'',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
                 itemsList: [
@@ -109,6 +114,7 @@ app.listen(3000, function () {
 
             let Dialog5 = new DialogModel({
                 name: 'AlteraPlanoCelular',
+                description:'',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
                 itemsList: [
@@ -120,6 +126,7 @@ app.listen(3000, function () {
 
             let Dialog6 = new DialogModel({
                 name: 'Transfer',
+                description:'',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
                 itemsList: [
@@ -132,6 +139,7 @@ app.listen(3000, function () {
 
             let Dialog7 = new DialogModel({
                 name: 'Despedida',
+                description:'',
                 application: '5e476a593f836b0e8cc7c999',
                 channel: '5e3a45f04f0fe914407c316a',
                 itemsList: [
@@ -177,9 +185,9 @@ app.listen(3000, function () {
             let Prompt1 = new PromptModel({
                 name: `Saudacao`,
                 logic: [
-                    { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'dia', index: 1 },   //  md.turno
-                    { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'tarde', index: 2 },   //  md.turno
-                    { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'noite', index: 3 },  //  md.turno
+                    { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'dia', index: 1 },   //  md.system.turno
+                    { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'tarde', index: 2 },   //  md.system.turno
+                    { datapath: '5e48ebb3c2d1d217e0ddbc6a', value: 'noite', index: 3 },  //  md.system.turno
                 ],
                 content: [{ value: 'Bom dia!' }, { value: 'Boa tarde!' }, { value: 'Boa noite!' }],
                 files: [{ filename: 'Bomdia.wav' }, { filename: 'Boatarde.wav' }, { filename: 'Boanoite.wav' }]
@@ -204,9 +212,9 @@ app.listen(3000, function () {
             let Prompt4 = new PromptModel({
                 name: `MenuOfertas`,
                 logic: [
-                    { datapath: '5e48e0e2fc55ac3fe0532220', value: 'POS', index: 1 },   //  ani.tipoPlano
-                    { datapath: '5e48e0e2fc55ac3fe0532220', value: 'PRE', index: 2 },   //  ani.tipoPlano
-                    { datapath: '5e48e0e2fc55ac3fe0532220', value: 'CONTROLE', index: 3 },  //  ani.tipoPlano
+                    { datapath: '5e48e0e2fc55ac3fe0532220', value: 'POS', index: 1 },   //  user.ani.tipoPlano
+                    { datapath: '5e48e0e2fc55ac3fe0532220', value: 'PRE', index: 2 },   //  user.ani.tipoPlano
+                    { datapath: '5e48e0e2fc55ac3fe0532220', value: 'CONTROLE', index: 3 },  //  user.ani.tipoPlano
                 ],
                 content: [
                     { value: 'Para contratar Pré Pago, digite 1. Para contratar Controle, digite 2. Para finalizar o atendimento, digite 3.' },
@@ -347,9 +355,27 @@ app.listen(3000, function () {
 
             let BusinessRule = new BusinessRuleModel({
                 channelId: "5e476acecce4cd2860b9869d",  	//  Voice
+                name: `Init SysInfo By Date`,
+                type: 'plugin',
+                typeId: '5e48c9fcca9e054250f264b8',  //  id do plugin Init
+                method: '5e48c9fcca9e054250f264b9', //  metodo do plugin InitSysInfoByDate da Integration
+                inputList: [{
+                    modelId: '5e48e0e2fc55ac3fe053221b',    // param.dataHoje
+                    modeltype: 'datapath'
+                }],
+                description: "Inicializa as mds de system baseadas na data atual : md.system.turno",
+                example: "Faz a validação de campos baseados em parametros. Ex: se horario atual = 10:00:00 entao md.system.turno=dia",
+                output: {
+                    dataPathList: [{ _id: '5e48e0e2fc55ac3fe053221a' }] //  md.system.turno
+                },
+                expires: 1000
+            })
+
+            let BusinessRule = new BusinessRuleModel({
+                channelId: "5e476acecce4cd2860b9869d",  	//  Voice
                 name: `Obter Dados Chamador VOIP`,
                 type: 'integration',
-                class: '5e48c9fcca9e054250f264b8',  //  id da Voip Integration
+                typeId: '5e48c9fcca9e054250f264b8',  //  id da Voip Integration
                 method: '5e48c9fcca9e054250f264b9', //  endpoint da Integration
                 inputList: [{
                     modelId: null,    //  sipChannel
@@ -358,7 +384,7 @@ app.listen(3000, function () {
                 description: "Identificar os dados do chamador através do sip channel. Em caso de erro, direciona para Transfer. Sucesso prossegue para Saudação. Requer queryParameter.",
                 example: "Consultar dados do usuário no SIP CHANEL#21614 para identificar o ANI.",
                 output: {
-                    dataPathList: [{ _id: '5e48d24b1c7b05319431b83b' }] //  voip.ani 
+                    dataPathList: [{ _id: '5e48e0e2fc55ac3fe053221a' }, { _id: '5e48e0e2fc55ac3fe053221b' }] //  voip.ani, user.ani
                 },
                 integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  TODO: Set Dialog Transfer
                 integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  TODO: Set Dialog Saudacao
@@ -369,16 +395,10 @@ app.listen(3000, function () {
                 channelId: "5e476acecce4cd2860b9869d",  //  Voice
                 name: `Saudacao`,
                 type: 'prompt',
-                class: null,
+                typeId: '', //  TODO: id Prompt Saudacao
                 method: null,
-                inputList: [{
-                    modelId: '5e48e0e2fc55ac3fe053221c',    //  param.dataHoje
-                    modeltype: 'datapath'
-                }, {
-                    modelId: '5e3b0234e389162f5835e761',    //  TODO: Set Prompt Saudacao
-                    modeltype: 'prompt'
-                }],
-                description: "Validar o horario da requisicao de acordo com a data passada no parametro",
+                inputList: [],
+                description: "Tratamento de saudação de acordo com a hora do dia 00:00 e 11:59 / 12:00 e 17:59 / 18:00 e 23:59",
                 example: "Entre 00:00 e 11:59 'bomdia.wav' / 12:00 e 17:59 'boatarde.wav' / 18:00 e 23:59 'boanoite.wav'",
                 expires: 1000
             })
@@ -387,14 +407,14 @@ app.listen(3000, function () {
                 channelId: "5e476acecce4cd2860b9869d",  //  Voice
                 name: `Redirect To Dialog`,
                 type: 'plugin',
-                class: '5e3b25b55aa36d112c208b25',  //  TODO: Set plugin Voice Tags
+                typeId: '5e3b25b55aa36d112c208b25',  //  TODO: Set plugin Voice Tags
                 method: '5e3b1d36922477484406cc69', //  TODO: Set plugin method Goto
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    //  TODO: Set Dialog MenuTriagem
                     modeltype: 'dialog'
                 }],
                 description: "Criar um redirecionamento para outro Dialog aguardando 5 segundos antes de redirecionar.",
-                example: "Aguardar 5 segundos antes de direcionar para o próximo Dialog MenuTriagem.",
+                example: "Aguardar 5 segundos antes de direcionar para o próximo Dialog informado.",
                 expires: 1000
             })
 
@@ -402,7 +422,7 @@ app.listen(3000, function () {
                 channelId: "5e488ca6c2d1d217e0ddbc69",  //  OMNI
                 name: `Integração Inicial Siebel`,
                 type: 'integration',
-                class: '5e48c9fcca9e054250f264bc',  //  Integracao Siebel
+                typeId: '5e48c9fcca9e054250f264bc',  //  Integracao Siebel
                 method: '5e48c9fcca9e054250f264be', //  Meteodo IntegracaoInicialSiebel
                 inputList: [{
                     modelId: '5e48e0e2fc55ac3fe053221b',    // user.ani
@@ -424,7 +444,7 @@ app.listen(3000, function () {
                 channelId: "5e476acecce4cd2860b9869d",  //  Voice
                 name: `MenuOfertas`,
                 type: 'prompt',
-                class: null,
+                typeId: '', //  TODO: id prompt MenuOfertas
                 method: null,
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    //  user.ani.tipoPlanoCelular
@@ -442,7 +462,7 @@ app.listen(3000, function () {
                 channelId: "5e3a45f04f0fe914407c316a",  //  OMNI
                 name: `AlteraPlanoCelular`,
                 type: 'integration',
-                class: '5e48c9fcca9e054250f264bc',  //  Integração Siebel
+                typeId: '5e48c9fcca9e054250f264bc',  //  Integração Siebel
                 method: '5e48c9fcca9e054250f264bd', //  AlteraPlanoCelular
                 inputList: [{
                     modelId: '5e48e0e2fc55ac3fe053221b',    // user.ani para solicitar a mudança no plano
@@ -465,7 +485,7 @@ app.listen(3000, function () {
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `Oferta de Promoção Dia das Mães`,
                 type: 'plugin',
-                class: '5e48c9fcca9e054250f264ba',  //  Fazer o plugin de leitura do Parametros Oi 
+                typeId: '5e48c9fcca9e054250f264ba',  //  Fazer o plugin(?) de leitura do Parametros Oi << ---------------- FAzer Metadata saver tbm
                 method: '5e48c9fcca9e054250f264bb',
                 inputList: [{
                     modelId: '5e48e0e2fc55ac3fe0532224',    //  param.periodoPromoMaes
@@ -487,7 +507,7 @@ app.listen(3000, function () {
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `M4U - AdesaoPromoMaes`,
                 type: 'integration',
-                class: '5e3b25b55aa36d112c208b25',
+                typeId: '5e3b25b55aa36d112c208b25',
                 method: '5e3b1d36922477484406cc69',
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    // user.ani
@@ -507,7 +527,7 @@ app.listen(3000, function () {
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `Goodbye`,
                 type: 'plugin',
-                class: '5e3b25b55aa36d112c208b25',  //  Goodbye
+                typeId: '5e3b25b55aa36d112c208b25',  //  Goodbye
                 method: '5e3b1d36922477484406cc69', //  SaveInfo
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    //  lead.voip.{number}.hangup.date
@@ -620,7 +640,7 @@ app.listen(3000, function () {
             })
 
             let DataPath14 = new DataPathModel({
-                path: `md.turno`,
+                path: `md.system.turno`,
                 description: "Preenchido com 'dia', 'tarde' ou 'noite'. De acordo com a hora do dia informada.",
             })
 

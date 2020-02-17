@@ -6,8 +6,8 @@ const mongoDB_hub = require('../../mongoDB_hub')
 let BusinessRuleSchema = new mongoose.Schema({
     channelId: mongoose.Schema.Types.ObjectId,  //  Cada regra de negocio está associada a um canal de atendimento Web/Voice/SMS/Chat/Rest/etc
     name: { type: String, unique: true, required: true, dropDups: true },
-    type:String,    //  plugin/integration
-    class: mongoose.Schema.Types.ObjectId,
+    type:String,    //  plugin/integration/prompt
+    typeId: mongoose.Schema.Types.ObjectId, //  Id of type collection
     method: mongoose.Schema.Types.ObjectId,
     inputList: [{
         modelId: mongoose.Schema.Types.ObjectId,
