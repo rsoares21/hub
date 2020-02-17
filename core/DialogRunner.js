@@ -36,6 +36,9 @@ class DialogRunner {
                         //let pluginId = dialogInvoke.plugins[i]._id
                         //console.log('RCKKK : ' + dialogInvoke.plugins[i]._id)
 
+
+                        // CORRIGIR : Buscar cada item do itemsList, desobrindo o tipo prompt/businessrule
+
                         PluginModel.findOne({ _id: dialogInvoke.plugins[i]._id}, function (err, pluginInvoke) {
 
                             if (err) {
@@ -59,6 +62,9 @@ class DialogRunner {
                                 // 1 - Carregar as integrações dinamicamente caso os datapaths ainda nao tenham sido carregados no redis
                                 // 2 - Desenvolver a escrita do metadataPath no redis para cada plugin executado (PluginRunner)
                                 // 3 - Chamar o Parser de acordo com o tipo definido e gerar output
+
+
+
 
 
                             }

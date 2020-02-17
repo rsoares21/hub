@@ -355,13 +355,14 @@ app.listen(3000, function () {
 
             let BusinessRule = new BusinessRuleModel({
                 channelId: "5e476acecce4cd2860b9869d",  	//  Voice
-                name: `Init SysInfo By Date`,
+                name: `Init SysInfo`,
                 type: 'plugin',
                 typeId: '5e48c9fcca9e054250f264b8',  //  id do plugin Init
                 method: '5e48c9fcca9e054250f264b9', //  metodo do plugin InitSysInfoByDate da Integration
                 inputList: [{
                     modelId: '5e48e0e2fc55ac3fe053221b',    // param.dataHoje
-                    modeltype: 'datapath'
+                    modeltype: 'datapath',
+                    index:1
                 }],
                 description: "Inicializa as mds de system baseadas na data atual : md.system.turno",
                 example: "Faz a validação de campos baseados em parametros. Ex: se horario atual = 10:00:00 entao md.system.turno=dia",
@@ -371,7 +372,7 @@ app.listen(3000, function () {
                 expires: 1000
             })
 
-            let BusinessRule = new BusinessRuleModel({
+            let BusinessRule1 = new BusinessRuleModel({
                 channelId: "5e476acecce4cd2860b9869d",  	//  Voice
                 name: `Obter Dados Chamador VOIP`,
                 type: 'integration',
@@ -380,6 +381,7 @@ app.listen(3000, function () {
                 inputList: [{
                     modelId: null,    //  sipChannel
                     modeltype: 'query', //  recebe informação do sip channel via queryParameter
+                    index:1
                 }],
                 description: "Identificar os dados do chamador através do sip channel. Em caso de erro, direciona para Transfer. Sucesso prossegue para Saudação. Requer queryParameter.",
                 example: "Consultar dados do usuário no SIP CHANEL#21614 para identificar o ANI.",
@@ -391,7 +393,7 @@ app.listen(3000, function () {
                 expires: 1000
             })
 
-            let BusinessRule1 = new BusinessRuleModel({
+            let BusinessRule2 = new BusinessRuleModel({
                 channelId: "5e476acecce4cd2860b9869d",  //  Voice
                 name: `Saudacao`,
                 type: 'prompt',
@@ -403,7 +405,7 @@ app.listen(3000, function () {
                 expires: 1000
             })
 
-            let BusinessRule2 = new BusinessRuleModel({
+            let BusinessRule3 = new BusinessRuleModel({
                 channelId: "5e476acecce4cd2860b9869d",  //  Voice
                 name: `Redirect To Dialog`,
                 type: 'plugin',
@@ -411,14 +413,15 @@ app.listen(3000, function () {
                 method: '5e3b1d36922477484406cc69', //  TODO: Set plugin method Goto
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    //  TODO: Set Dialog MenuTriagem
-                    modeltype: 'dialog'
+                    modeltype: 'dialog',
+                    index:1
                 }],
                 description: "Criar um redirecionamento para outro Dialog aguardando 5 segundos antes de redirecionar.",
                 example: "Aguardar 5 segundos antes de direcionar para o próximo Dialog informado.",
                 expires: 1000
             })
 
-            let BusinessRule3 = new BusinessRuleModel({
+            let BusinessRule4 = new BusinessRuleModel({
                 channelId: "5e488ca6c2d1d217e0ddbc69",  //  OMNI
                 name: `Integração Inicial Siebel`,
                 type: 'integration',
@@ -426,7 +429,8 @@ app.listen(3000, function () {
                 method: '5e48c9fcca9e054250f264be', //  Meteodo IntegracaoInicialSiebel
                 inputList: [{
                     modelId: '5e48e0e2fc55ac3fe053221b',    // user.ani
-                    modeltype: 'datapath'
+                    modeltype: 'datapath',
+                    index:1
                 }],
                 description: "Consulta dados do usuário através do ANI.",
                 example: "ANI = 5521999797799",
@@ -440,7 +444,7 @@ app.listen(3000, function () {
                 expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
 
-            let BusinessRule4 = new BusinessRuleModel({
+            let BusinessRule5 = new BusinessRuleModel({
                 channelId: "5e476acecce4cd2860b9869d",  //  Voice
                 name: `MenuOfertas`,
                 type: 'prompt',
@@ -448,17 +452,19 @@ app.listen(3000, function () {
                 method: null,
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    //  user.ani.tipoPlanoCelular
-                    modeltype: 'datapath'
+                    modeltype: 'datapath',
+                    index:1
                 }, {
                     modelId: '5e3b0234e389162f5835e761',    //  MenuOfertas
-                    modeltype: 'prompt'
+                    modeltype: 'prompt',
+                    index:2
                 }],
                 description: "Ofertar mudanca de planos diferentes do que o usuário já possui.",
                 example: "Se usuário = PRE ofertar POS e COTROLE (ofertaPosPagoEControle.wav); Se usuário = POS ofertar PRE e CONTROLE (ofertaPrePagoEControle.wav); Se usuário = CONTROLE ofertar PRE e POS (ofertaPrePagoEPosPago.wav).",
                 expires: 1000
             })
 
-            let BusinessRule5 = new BusinessRuleModel({
+            let BusinessRule6 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",  //  OMNI
                 name: `AlteraPlanoCelular`,
                 type: 'integration',
@@ -466,10 +472,12 @@ app.listen(3000, function () {
                 method: '5e48c9fcca9e054250f264bd', //  AlteraPlanoCelular
                 inputList: [{
                     modelId: '5e48e0e2fc55ac3fe053221b',    // user.ani para solicitar a mudança no plano
-                    modeltype: 'datapath'
+                    modeltype: 'datapath',
+                    index:1
                 },{
                     modelId: null,    // user.ani para solicitar a mudança no plano
-                    modeltype: 'query'  //  novo plano de celular escolhido pelo usuario
+                    modeltype: 'query',  //  novo plano de celular escolhido pelo usuario
+                    index:2
                 }],
                 description: "Altera o plano do usuário de acordo com a opção selecionada no MenuOfertas 'PRE', 'POS' ou 'CONTROLE'. Requer uma queryParameter preenchida com 'PRE', 'POS', ou 'CONTROLE'. Selecionada no MenuOfertas.",
                 example: "Usuário Pre Pago envia solicitacao de alteracao do plano para Pos Pago através da Integracao do Siebel conforme documentação. ",
@@ -481,7 +489,7 @@ app.listen(3000, function () {
                 expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
 
-            let BusinessRule6 = new BusinessRuleModel({
+            let BusinessRule7 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `Oferta de Promoção Dia das Mães`,
                 type: 'plugin',
@@ -489,10 +497,12 @@ app.listen(3000, function () {
                 method: '5e48c9fcca9e054250f264bb',
                 inputList: [{
                     modelId: '5e48e0e2fc55ac3fe0532224',    //  param.periodoPromoMaes
-                    modeltype: 'parameter'
+                    modeltype: 'parameter',
+                    index:1
                 }, {
                     modelId: '5e48e0e2fc55ac3fe0532221',    //  nav.alteraPlano.novoPlano
-                    modeltype: 'datapath'
+                    modeltype: 'datapath',
+                    index:2
                 }],
                 description: `Verifica se a data atual está dentro do período informado pelo parametro da promoção do dia das Maes e se o usuário pediu alteração para 'CONTROLE' no MenuOfertas. ` +
                     `Se sim, encaminha para MenuOfertaProomMaes. O valor do parametro deve ser '10/05/2020_00:00:00 10/06/2020_23:59:59'.`,
@@ -503,7 +513,7 @@ app.listen(3000, function () {
                 expires: 1000
             })
 
-            let BusinessRule7 = new BusinessRuleModel({
+            let BusinessRule8 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `M4U - AdesaoPromoMaes`,
                 type: 'integration',
@@ -511,7 +521,8 @@ app.listen(3000, function () {
                 method: '5e3b1d36922477484406cc69',
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    // user.ani
-                    modeltype: 'datapath'
+                    modeltype: 'datapath',
+                    index:1
                 }],
                 description: "Solicita adesão para promoção do Dia das Mães 2020 através do ANI, conforme documentação. O usuário deve ser do tipo CONTROLE.",
                 example: "Usuário solicita adesão para a promoção do Dia Das Mães 2020, que será definida dentro do período informado em parâmetro. Ex: 01/01/2020 00:00:00 15/01/2020 23:59:59",
@@ -523,7 +534,7 @@ app.listen(3000, function () {
                 expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
 
-            let BusinessRule8 = new BusinessRuleModel({
+            let BusinessRule9 = new BusinessRuleModel({
                 channelId: "5e3a45f04f0fe914407c316a",
                 name: `Goodbye`,
                 type: 'plugin',
@@ -531,7 +542,8 @@ app.listen(3000, function () {
                 method: '5e3b1d36922477484406cc69', //  SaveInfo
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    //  lead.voip.{number}.hangup.date
-                    modeltype: 'lead'
+                    modeltype: 'lead',
+                    index:1
                 }],
                 description: "Salvar o horário da finalização do atendimento desse usuário em LEAD.",
                 example: "Salvar a data atual no LEAD.",
@@ -555,6 +567,7 @@ app.listen(3000, function () {
             BusinessRule6.save()
             BusinessRule7.save()
             BusinessRule8.save()
+            BusinessRule9.save()
 
             res.end(``)
 
@@ -583,9 +596,10 @@ app.listen(3000, function () {
             })
 
             let DataPath3 = new DataPathModel({
-                path: `param.dataHoje`,
-                description: "Data a ser utilizada nos testes. Formato 01/05/2020 00:00:00",
-                paramValue: '01/05/2020 00:00:00'
+                path: `param.dev.dataHoje`,
+                description: "Data a ser utilizada apenas no ambiente de testes. Formato 01/05/2020 00:00:00",
+                paramValue: '01/05/2020 00:00:00',
+                prodOnlyValue:'SYSTEM.CURRENT_DATETIME'
             })
 
             let DataPath4 = new DataPathModel({
@@ -691,6 +705,7 @@ app.listen(3000, function () {
                     }]
                 }
             })
+            /*
             let Integration1 = new IntegrationModel({
                 name: `Parametros Oi`,
                 shortname: 'param',  //  10 chars no maximo
@@ -702,7 +717,7 @@ app.listen(3000, function () {
                         description: `Retorna o valor de um parâmetro.`
                     }]
                 }
-            })
+            })*/
 
             let Integration2 = new IntegrationModel({
                 name: `Siebel`,

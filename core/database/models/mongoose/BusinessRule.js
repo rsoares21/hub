@@ -11,7 +11,8 @@ let BusinessRuleSchema = new mongoose.Schema({
     method: mongoose.Schema.Types.ObjectId,
     inputList: [{
         modelId: mongoose.Schema.Types.ObjectId,
-        modeltype: String   //  dialog/parameter/datapath/query
+        modeltype: String,   //  dialog/parameter/datapath/query
+        index:Number
     }],
     description: String,
     example: String,
