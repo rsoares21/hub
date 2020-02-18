@@ -17,12 +17,15 @@ let DialogSchema = new mongoose.Schema({
         modelType: String,  //  Prompt/BusinessRule
         index: Number   //  Ordem do item na contrucao do Dialog
     }],
+    nextDialog:mongoose.Schema.Types.ObjectId,  //  Para Dialogs informativos, sem menu. Gera tag de <goto> para o próximo Dialog. (voice)
+    integrationFaultDialog: mongoose.Schema.Types.ObjectId,  //  Dialog a ser chamado em caso de erro na integracão
+    integrationSuccessDialog: mongoose.Schema.Types.ObjectId,    //  Dialog a ser executado apos sucesso no Dialog atual
 
     hubResponse: String,  // retorno principal do Dialog formatado pelo Parser de acordo com o Channel
 
     version: Number,   // usado pra controle de versionamento do dialogo
     active: Boolean,
-    process: Boolean, //  Caso o dialogo nao tenha nenhum prompt com option, será considerado um processo
+    //process: Boolean, //  Caso o dialogo nao tenha nenhum prompt com option, será considerado um processo
 
 });
 

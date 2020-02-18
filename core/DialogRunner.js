@@ -59,9 +59,11 @@ class DialogRunner {
 
                                 // TODO
 
-                                // 1 - Carregar as integrações dinamicamente caso os datapaths ainda nao tenham sido carregados no redis
-                                // 2 - Desenvolver a escrita do metadataPath no redis para cada plugin executado (PluginRunner)
-                                // 3 - Chamar o Parser de acordo com o tipo definido e gerar output
+                                //  1   Carregar as integrações dinamicamente caso os datapaths ainda nao tenham sido carregados no redis
+                                //  2   Desenvolver a escrita do metadataPath no redis para cada plugin executado (PluginRunner)
+                                //  3   Chamar o Parser de acordo com o tipo definido e gerar output
+                                //  4   Quando rodar o plugin da vez, retornar um indicador de interceptação para outro Dialog, sem rodar os demais plugins.
+                                //  4   Esse evento transfere o fluxo de navegacão do usuário para outro Dialog sem executar os demais plugins da lista do Dialog atual.
 
 
 

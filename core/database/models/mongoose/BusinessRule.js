@@ -22,8 +22,8 @@ let BusinessRuleSchema = new mongoose.Schema({
     },
     //modeltype: "BusinessRule",   // Identificador do tipo de objeto parent (diferenciando metadataPath e dataPath)
     integrationFaultDialog:mongoose.Schema.Types.ObjectId,
-    integrationSuccessDialog:mongoose.Schema.Types.ObjectId,
-    expires: Number    //  controla quando a regra deve ser revalidada e atualizada no redis
+    integrationSuccessDialog:mongoose.Schema.Types.ObjectId
+    //expires: Number    //  controla quando a regra deve ser revalidada e atualizada no redis
 
 });
 
