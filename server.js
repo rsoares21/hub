@@ -239,6 +239,27 @@ app.listen(3000, function () {
                 files: [{ filename: 'Despedida.wav', index: 1 }]
             })
 
+            let Prompt7 = new PromptModel({
+                name: `MenuOfertaPromoMaes`,
+                syncContent: [{
+                    value: `Seu plano foi alterado com sucesso! Agora temos uma oferta especial para você que contratou um plano Controle. Deseja participar da promoção do dia das Mães 2020 e ` +
+                        `receber um desconto de 50% nos próximos 6 meses ? Para participar da promoção, digite 1. Ou digite 2 se deseja decidir depois.`, index: 1
+                }],
+                //asyncContent: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
+                files: [{ filename: 'MenuOfertaPromoMaes.wav', index: 1 }],
+                options: [
+                    [{ value: '1', dialog: 'TODO:', queryParam: null, leadIds: null },     //  M4UAdesaoPromoMaes
+                    { value: '2', dialog: 'TODO:', queryParam: null, leadIds: '5e3b24574b1f6736dc08dadd' }],    //  Despedida, Lead?
+                ]
+            })
+
+            let Prompt7 = new PromptModel({
+                name: `DespedidaPromoMaes`,
+                syncContent: [{ value: 'Parabéns, agora você está participando da promoção do Dia das Mães!', index: 1 }],
+                //asyncContent: [{ value: 'Seu plano foi alterado com sucesso. Obrigado por entrar em contato conosco. Até logo!' }],
+                files: [{ filename: 'DespedidaPromoMaes.wav', index: 1 }]
+            })
+
             Prompt.save()
                 .then(doc => {
                     //console.log(doc)
@@ -253,6 +274,7 @@ app.listen(3000, function () {
             Prompt4.save()
             Prompt5.save()
             Prompt6.save()
+            Prompt7.save()
 
             res.end(``)
 
@@ -265,25 +287,15 @@ app.listen(3000, function () {
 
             const PluginModel = require('./core/database/models/mongoose/Plugin')
 
-            /*
             let Plugin = new PluginModel({
-                name: `Saudacao`,
-                description: 'Saudacoes',
+                name: `Offer Intercept`,
+                description: `Intercepta a navegação atual do usuário e redireciona para outro Dialog se a condição for verdadeira.`,
                 pluginWorker: {
-                    name: 'Saudacao',
-                    pluginMethods: [
-                        { name: 'SaudacaoInicial', description: 'Retorna os prompts de bom dia, boa tarde ou boa noite e de acordo com o horario do dia passado via parametro' }]
-                }
-            })*/
-
-            let Plugin = new PluginModel({
-                name: `Oferta Promos`,
-                description: 'Salva informações da experiência recente do usuário',
-                pluginWorker: {
-                    name: 'OfertaPromos',
+                    name: 'OfferRedirect',
                     pluginMethods: [{
-                        name: 'SaveInfo',
-                        description: 'Salva alguma informação do atendimento recente.'
+                        name: 'RedirectByDatePeriodAndTwoParamsMatch',
+                        description: 'Redireciona o usuário imediatamente para outro Dialog (interceptação), caso atenda a seguinte condição : ' +
+                            `Se dentro do periodo informado no parametro1 (formato 01/05/2020_00:00:00 15/05/2020_23:59:59) e (paramtro 2 = parametro 3) intercepta para param4 (Sucesso). Senao redireciona para param5 (Erro).`
                     }]
                 }
             })
@@ -404,36 +416,40 @@ app.listen(3000, function () {
                     modeltype: 'datapath',
                     index: 2
                 }, {
-                    modelId: 'TODO:',    // MenuOfertaPromoMaes
-                    modeltype: 'dialog',  //  Dialog de Sucesso
+                    modelId: '5e4b5ba5c2d1d217e0ddbc6b',    //  param.tipoPlanoCelularOfferPromoMaes
+                    modeltype: 'parameter',
                     index: 3
                 }, {
-                    modelId: 'TODO:',    // Transfer
-                    modeltype: 'dialog',  //  Dialog de Erro
+                    modelId: 'TODO:',    // MenuOfertaPromoMaes
+                    modeltype: 'dialog',  //  Elegível
                     index: 4
+                }, {
+                    modelId: 'TODO:',    // Despedida
+                    modeltype: 'dialog',  //  Não Elegível
+                    index: 5
                 }],
-                description: `Verifica se a data atual está dentro do período informado pelo parametro da promoção do dia das Maes e se o usuário possui plano de celular CONTROLE ativo. ` +
-                    `Sucesso encaminha para MenuOfertaPromoMaes. Falha encaminha para backoffice. O valor do parametro deve ser '10/05/2020_00:00:00 10/06/2020_23:59:59'.`,
-                example: "Se data atual estiver dentro do periodo informado no parametro e usuário possui plano CONTROLE então retorna Sucesso.",
+                description: `Verifica se a data atual está dentro do período informado pelo parametro da promoção do dia das Maes e se o usuário possui plano de celular CONTROLE ativo.` +
+                    `Se elegível encaminha para MenuOfertaPromoMaes. Se não Elegível encaminha para Despedida. O valor do parametro deve ser '10/05/2020_00:00:00 10/06/2020_23:59:59'.`,
+                example: "N/A",
                 output: {
                 },
                 //expires: 1000
             })
 
             let BusinessRule8 = new BusinessRuleModel({
-                name: `M4U - AdesaoPromoMaes`,
+                name: `M4U - AdesaoPromo`,
                 type: 'integration',
-                typeId: '5e3b25b55aa36d112c208b25',
-                method: '5e3b1d36922477484406cc69',
+                typeId: 'TODO:',    //  M4u
+                method: 'TODO:',    //  M4uAdesaoPromoMaes
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    // user.ani
                     modeltype: 'datapath',
                     index: 1
                 }],
-                description: "Solicita adesão para promoção do Dia das Mães 2020 através do ANI, conforme documentação. O usuário deve ser do tipo CONTROLE.",
+                description: "Solicita adesão para promoção através do ANI, conforme documentação. O usuário deve ser do tipo CONTROLE.",
                 example: "Usuário solicita adesão para a promoção do Dia Das Mães 2020, que será definida dentro do período informado em parâmetro. Ex: 01/01/2020 00:00:00 15/01/2020 23:59:59",
                 output: {
-                    //dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  metadata.AlteraPlano.fail = true
+                    //dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  Lead?
                 },
                 integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Transfer
                 integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  DespedidaPromoMaes2020
@@ -553,6 +569,11 @@ app.listen(3000, function () {
                 description: "Preenchido com 'dia', 'tarde' ou 'noite'. De acordo com a hora do dia informada.",
             })
 
+            let DataPath14 = new DataPathModel({
+                path: `param.tipoPlanoCelularOfferPromoMaes`,
+                description: "Tipo de plano celular que poderá aderir na promoção do Dia das Mães.",
+                paramValue: 'CONTROLE'
+            })
 
             DataPath.save()
                 .then(doc => {

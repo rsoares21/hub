@@ -64,6 +64,7 @@ class DialogRunner {
                                 //  3   Chamar o Parser de acordo com o tipo definido e gerar output
                                 //  4   Quando rodar o plugin da vez, retornar um indicador de interceptação para outro Dialog, sem rodar os demais plugins.
                                 //  4   Esse evento transfere o fluxo de navegacão do usuário para outro Dialog sem executar os demais plugins da lista do Dialog atual.
+                                //  4   Encapsular a informacão em algum objeto para saber se será necessário interceptar.
 
 
 
