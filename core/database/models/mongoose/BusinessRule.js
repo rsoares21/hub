@@ -12,7 +12,8 @@ let BusinessRuleSchema = new mongoose.Schema({
     inputList: [{
         modelId: mongoose.Schema.Types.ObjectId,
         modeltype: String,   //  dialog/parameter/datapath/query
-        index:Number
+        index:Number,
+        leadDatapathId:mongoose.Schema.Types.ObjectId   //  id do datapath (LEAD) que será registrado caso seja um dialog de retorno.
     }],
     description: String,
     example: String,

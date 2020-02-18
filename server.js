@@ -59,6 +59,7 @@ app.listen(3000, function () {
                     { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "prompt", index: 1 },    //  Oi
                     { modelId: "5e3debc97cedaf26245a368f", modelType: "prompt", index: 2 }],     //  prompt dinamico bomdia, boatarde, boanoite
                 nextDialog: '5e4a3ec53ccd8c00889323ef',   // TODO: Goto Menu Triagem
+                lead: { leadId: 'TODO:', info: 'Inicio da atendimento.'  },
                 version: 0.1,
                 active: true,
             })
@@ -84,8 +85,8 @@ app.listen(3000, function () {
                     { modelId: "5e3debc97cedaf26245a3699", modelType: "integration", index: 1 }],   //  Consulta dos dados do plano de celular do usuário     integrationFaultDialog, integrationSuccessDialog
                 version: 0.1,
                 active: true,
-                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  TODO: Set Dialog Transfer
-                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  TODO: Set Dialog MenuOfertas
+                integrationFault: { dialog: 'TODO:', lead: null }, //  TODO: Set Dialog Transfer
+                integrationSuccess: { dialog: 'TODO:', lead: null }    //  TODO: Set Dialog MenuOfertas
             })
 
             let Dialog5 = new DialogModel({
@@ -106,8 +107,8 @@ app.listen(3000, function () {
                 //channel: '5e3a45f04f0fe914407c316a',
                 itemsList: [
                     { modelId: "5e3debc97cedaf26245a3699", modelType: "integration", index: 1 }],   //  Altera Plano do usuário de acordo com a opção selecionada no MenuTriagem     integrationFaultDialog, integrationSuccessDialog
-                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  TODO: Set Dialog Transfer
-                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  TODO: Set Dialog OfertaPromoMaes
+                integrationFault: { dialog: '5e3b138185e02b46b82cec6f', lead: null },  //  TODO: Set Dialog Transfer
+                integrationSuccess: { dialog: '5e3b138185e02b46b82cec6f', lead: null },   //  TODO: Set Dialog OfertaPromoMaes
                 version: 0.1,
                 active: true,
             })
@@ -195,8 +196,8 @@ app.listen(3000, function () {
                 //asyncContent: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
                 files: [{ filename: 'MenuTriagem.wav', index: 1 }],
                 options: [
-                    [{ value: '1', dialog: null, queryParam: null, leadIds: null },     //  ConsultaInicialSiebel
-                    { value: '2', dialog: null, queryParam: null, leadIds: '5e3b24574b1f6736dc08dadd' }],    //  dialog Transfer , lead #01
+                    [{ value: '1', dialog: null, queryParam: null, leadId: null },     //  ConsultaInicialSiebel
+                    { value: '2', dialog: null, queryParam: null, leadId: '5e3b24574b1f6736dc08dadd' }],    //  dialog Transfer , lead #01
                 ]
             })
 
@@ -227,7 +228,7 @@ app.listen(3000, function () {
 
             let Prompt5 = new PromptModel({
                 name: `AguardeTransferencia`,
-                syncContent: [{ value: 'Você está sendo direcionado para um de nossos consultores. Por favor, aguarde.', index: 1 }],
+                syncContent: [{ value: 'Você está sendo direcionado para um de nossos analistas. Por favor, aguarde.', index: 1 }],
                 asyncContent: [{ value: 'Registramos o seu contato e vamos responder em breve. Por favor, aguarde.', index: 1 }],
                 files: [{ filename: 'Aguarde.wav', index: 1 }]
             })
@@ -248,12 +249,12 @@ app.listen(3000, function () {
                 //asyncContent: [{ value: 'Digite 1 para troca de plano, ou digite 2 se você não possui um plano e deseja contratar.' }],
                 files: [{ filename: 'MenuOfertaPromoMaes.wav', index: 1 }],
                 options: [
-                    [{ value: '1', dialog: 'TODO:', queryParam: null, leadIds: null },     //  M4UAdesaoPromoMaes
-                    { value: '2', dialog: 'TODO:', queryParam: null, leadIds: '5e3b24574b1f6736dc08dadd' }],    //  Despedida, Lead?
+                    [{ value: '1', dialog: 'TODO:', queryParam: null, leadId: null },     //  M4UAdesaoPromoMaes
+                    { value: '2', dialog: 'TODO:', queryParam: null, leadId: '5e3b24574b1f6736dc08dadd' }],    //  Despedida,
                 ]
             })
 
-            let Prompt7 = new PromptModel({
+            let Prompt8 = new PromptModel({
                 name: `DespedidaPromoMaes`,
                 syncContent: [{ value: 'Parabéns, agora você está participando da promoção do Dia das Mães!', index: 1 }],
                 //asyncContent: [{ value: 'Seu plano foi alterado com sucesso. Obrigado por entrar em contato conosco. Até logo!' }],
@@ -275,6 +276,7 @@ app.listen(3000, function () {
             Prompt5.save()
             Prompt6.save()
             Prompt7.save()
+            Prompt8.save()
 
             res.end(``)
 
@@ -422,11 +424,13 @@ app.listen(3000, function () {
                 }, {
                     modelId: 'TODO:',    // MenuOfertaPromoMaes
                     modeltype: 'dialog',  //  Elegível
-                    index: 4
+                    index: 4,
+                    leadDatapathId: 'TODO:'   //  Se precisar
                 }, {
                     modelId: 'TODO:',    // Despedida
                     modeltype: 'dialog',  //  Não Elegível
-                    index: 5
+                    index: 5,
+                    leadDatapathId: 'TODO:'   //  Se precisar
                 }],
                 description: `Verifica se a data atual está dentro do período informado pelo parametro da promoção do dia das Maes e se o usuário possui plano de celular CONTROLE ativo.` +
                     `Se elegível encaminha para MenuOfertaPromoMaes. Se não Elegível encaminha para Despedida. O valor do parametro deve ser '10/05/2020_00:00:00 10/06/2020_23:59:59'.`,
@@ -437,27 +441,42 @@ app.listen(3000, function () {
             })
 
             let BusinessRule8 = new BusinessRuleModel({
-                name: `M4U - AdesaoPromo`,
+                name: `M4U - AdesaoPromo Mães`,
                 type: 'integration',
                 typeId: 'TODO:',    //  M4u
-                method: 'TODO:',    //  M4uAdesaoPromoMaes
+                method: 'TODO:',    //  M4uAdesaoPromo
                 inputList: [{
                     modelId: '5e3b0234e389162f5835e761',    // user.ani
                     modeltype: 'datapath',
                     index: 1
                 }],
-                description: "Solicita adesão para promoção através do ANI, conforme documentação. O usuário deve ser do tipo CONTROLE.",
-                example: "Usuário solicita adesão para a promoção do Dia Das Mães 2020, que será definida dentro do período informado em parâmetro. Ex: 01/01/2020 00:00:00 15/01/2020 23:59:59",
+                description: "Submete adesão para promoção do dia das Mães através do ANI, conforme documentação.",
+                example: "Usuário solicita adesão para a Promoção do Dia das Mães Codigo adesao 'MAMAE_TOP'",
                 output: {
                     //dataPathList: [{ _id: '5e3b138185e02b46b82cec6f' }] //  Lead?
                 },
-                integrationFaultDialog: '5e3b138185e02b46b82cec6f',  //  Transfer
-                integrationSuccessDialog: '5e3b138185e02b46b82cec6f',    //  DespedidaPromoMaes2020
+                integrationFaultDialog: 'TODO:',  //  Transfer
+                integrationSuccessDialog: 'TODO:',    //  DespedidaPromoMaes2020
                 //expires: 1000
             })
 
             let BusinessRule9 = new BusinessRuleModel({
-                name: `Goodbye`,
+                name: `Transfer`,
+                type: 'plugin',
+                typeId: '5e3b25b55aa36d112c208b25',  //  Lead Manager
+                method: '5e3b1d36922477484406cc69', //  SaveLEAD
+                inputList: [{
+                    modelId: 'TODO:',    //  lead.novocontato
+                    modeltype: 'datapath',
+                    index: 1
+                }],
+                description: "Salvar o horário da finalização do atendimento desse usuário em LEAD.",
+                example: "Salvar a data atual no LEAD.",
+                //expires: 1000
+            })
+
+            let BusinessRule9 = new BusinessRuleModel({
+                name: `Despedida`,
                 type: 'plugin',
                 typeId: '5e3b25b55aa36d112c208b25',  //  Goodbye
                 method: '5e3b1d36922477484406cc69', //  SaveInfo
@@ -470,6 +489,7 @@ app.listen(3000, function () {
                 example: "Salvar a data atual no LEAD.",
                 //expires: 1000
             })
+
 
             BusinessRule.save()
                 .then(doc => {
@@ -503,7 +523,7 @@ app.listen(3000, function () {
 
             let DataPath = new DataPathModel({
                 path: `md.identificaUsuario.failed`,
-                description: "Controle de falha na Integração Voip para obter os dados do chamador",
+                description: "Controle de falha na Integração Voip para obter os dados do chamador.",
             })
 
             let DataPath1 = new DataPathModel({
@@ -513,7 +533,7 @@ app.listen(3000, function () {
 
             let DataPath2 = new DataPathModel({
                 path: `param.dev.dataHoje`,
-                description: "Data a ser utilizada apenas no ambiente de testes. Formato 01/05/2020 00:00:00",
+                description: "Data a ser utilizada apenas no ambiente de testes. Formato 01/05/2020 00:00:00.",
                 paramValue: '01/05/2020 00:00:00',
                 prodOnlyValue: 'SYSTEM.CURRENT_DATETIME'
             })
@@ -525,22 +545,22 @@ app.listen(3000, function () {
 
             let DataPath4 = new DataPathModel({
                 path: `md.consultaInicialSiebel.failed`,
-                description: "Controle de falha na chamada da Integração Inicial (SIEBEL)",
+                description: "Controle de falha na chamada da Integração Inicial (SIEBEL).",
             })
 
             let DataPath5 = new DataPathModel({
                 path: `md.consultaInicialSiebel.userNotFound`,
-                description: "Validação do cliente não encontrado na base Siebel",
+                description: "Validação do cliente não encontrado na base Siebel.",
             })
 
             let DataPath6 = new DataPathModel({
                 path: `user.ani.tipoPlanoCelular`,
-                description: "Tipo de plano do ANI (PRE, POS ou CONTROLE)",
+                description: "Tipo de plano do ANI (PRE, POS ou CONTROLE).",
             })
 
             let DataPath7 = new DataPathModel({
                 path: `nav.alteraPlano.novoPlano`,
-                description: "Plano selecionado pelo usuário no MenuOfertas. 'POS', 'PRE' ou 'CONTROLE'",
+                description: "Plano selecionado pelo usuário no MenuOfertas. 'POS', 'PRE' ou 'CONTROLE'.",
             })
 
             let DataPath8 = new DataPathModel({
@@ -559,21 +579,67 @@ app.listen(3000, function () {
                 paramValue: '01/05/2020_00:00:00 15/05/2020_23:59:59'
             })
 
-            let DataPath12 = new DataPathModel({
+            let DataPath11 = new DataPathModel({
                 path: `md.adesaoPromoMaes.failed`,
-                description: "Resultado da chamada para adesão da promoção do Dia das Mães (M4U)",
+                description: "Resultado da chamada para adesão da promoção do Dia das Mães (M4U).",
             })
 
-            let DataPath13 = new DataPathModel({
+            let DataPath12 = new DataPathModel({
                 path: `md.system.turno`,
                 description: "Preenchido com 'dia', 'tarde' ou 'noite'. De acordo com a hora do dia informada.",
             })
 
-            let DataPath14 = new DataPathModel({
+            let DataPath13 = new DataPathModel({
                 path: `param.tipoPlanoCelularOfferPromoMaes`,
                 description: "Tipo de plano celular que poderá aderir na promoção do Dia das Mães.",
                 paramValue: 'CONTROLE'
             })
+
+            let DataPath14 = new DataPathModel({
+                path: `lead.novocontato`,
+                description: "Indica que o usuário entrou em contato para algum assunto.",
+            })
+
+            let DataPath15 = new DataPathModel({
+                path: `lead.interesseAlterarPlano`,
+                description: "Indica que o usuário respondeu que deseja trocar de plano.",
+            })
+
+            let DataPath16 = new DataPathModel({
+                path: `lead.falhaAlteraPlano`,
+                description: "Houve falha no momento da troca de plano. Informar o plano.",
+            })
+
+            let DataPath17 = new DataPathModel({
+                path: `lead.alteraouPlanoCelular`,
+                description: "Efetuou alteracão do plano de celular. Informar o plano.",
+            })
+
+            let DataPath18 = new DataPathModel({
+                path: `lead.offerControleAgain7days`,
+                description: "Sinaliza uma possibilidade de oferta futura.",
+            })
+
+            let DataPath19 = new DataPathModel({
+                path: `lead.aderiuPromoMaes`,
+                description: "Efetuou adesão na promcão do Dia das Mães.",
+            })
+
+            let DataPath20 = new DataPathModel({
+                path: `lead.falhaAdesaoPromoMaes`,
+                description: "Houve falha no momento da adesão na promcão do Dia das Mães.",
+            })
+
+            let DataPath14 = new DataPathModel({
+                path: `lead.transferidoBO`,
+                description: "Indica que o usuário entrou em contato para algum assunto.",
+            })
+
+            let DataPath14 = new DataPathModel({
+                path: `lead.concluiExperienciaUsuario`,
+                description: "Indica que o usuário entrou em contato para algum assunto.",
+            })
+
 
             DataPath.save()
                 .then(doc => {
@@ -597,6 +663,13 @@ app.listen(3000, function () {
             DataPath11.save()
             DataPath12.save()
             DataPath13.save()
+            DataPath14.save()
+            DataPath15.save()
+            DataPath16.save()
+            DataPath17.save()
+            DataPath18.save()
+            DataPath19.save()
+            DataPath20.save()
 
             res.end(``)
 

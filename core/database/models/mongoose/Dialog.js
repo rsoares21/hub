@@ -17,9 +17,10 @@ let DialogSchema = new mongoose.Schema({
         modelType: String,  //  Prompt/BusinessRule
         index: Number   //  Ordem do item na contrucao do Dialog
     }],
-    nextDialog:mongoose.Schema.Types.ObjectId,  //  Para Dialogs informativos, sem menu. Gera tag de <goto> para o próximo Dialog. (voice)
-    integrationFaultDialog: mongoose.Schema.Types.ObjectId,  //  Dialog a ser chamado em caso de erro na integracão
-    integrationSuccessDialog: mongoose.Schema.Types.ObjectId,    //  Dialog a ser executado apos sucesso no Dialog atual
+    nextDialog: mongoose.Schema.Types.ObjectId,  //  Para Dialogs informativos, sem menu. Gera tag de <goto> para o próximo Dialog. (voice)
+    integrationFault: { dialog: mongoose.Schema.Types.ObjectId, lead: mongoose.Schema.Types.ObjectId }, //  Dialog a ser chamado em caso de erro na integracão
+    integrationSuccess: { dialog: mongoose.Schema.Types.ObjectId, lead: mongoose.Schema.Types.ObjectId },    //  Dialog a ser executado apos sucesso no Dialog atual
+    lead: { leadId: mongoose.Schema.Types.ObjectId, info: String }, //  Lead que será gerado ao entrar no Dialog
 
     hubResponse: String,  // retorno principal do Dialog formatado pelo Parser de acordo com o Channel
 
