@@ -9,6 +9,8 @@ const client = redis.createClient();
 
 const DialogRunner = require('./core/DialogRunner')
 
+require('./core/Logger')();
+
 const app = express()
 app.use(express.json()) // talvez seja opcional no final
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -50,21 +52,20 @@ app.listen(3000, function () {
 
             const DialogModel = require('./core/database/models/mongoose/Dialog')
 
-            let Dialog2 = new DialogModel({
-                name: 'Saudacao Inicial',
+            let Dialog = new DialogModel({
+                name: 'Saudacao_Inicial',
                 description: '',
-                application: '5e476a593f836b0e8cc7c999',
-                //channel: '5e476acecce4cd2860b9869d',
+                application: '5e476a593f836b0e8cc7c999',    //  Oi-144
                 itemsList: [
-                    { modelId: "5e3dfcf90d3c1e0290cb79e1", modelType: "prompt", index: 1 },    //  Oi
+                    { modelId: "5e4cd63d3f378a44c01449aa", modelType: "prompt", index: 1 },    //  Oi
                     { modelId: "5e3debc97cedaf26245a368f", modelType: "prompt", index: 2 }],     //  prompt dinamico bomdia, boatarde, boanoite
                 nextDialog: '5e4a3ec53ccd8c00889323ef',   // TODO: Goto Menu Triagem
-                lead: { leadId: 'TODO:', info: 'Inicio da atendimento.'  },
+                lead: { leadId: '5e4cd61cc2d1d217e0ddbc6c', info: 'Inicio da atendimento.' },
                 version: 0.1,
-                active: true,
+                active: true
             })
 
-            let Dialog3 = new DialogModel({
+            let Dialog1 = new DialogModel({
                 name: 'MenuTriagem',
                 description: '',
                 application: '5e476a593f836b0e8cc7c999',
@@ -76,7 +77,7 @@ app.listen(3000, function () {
                 active: true,
             })
 
-            let Dialog4 = new DialogModel({
+            let Dialog2 = new DialogModel({
                 name: 'ConsultaInicialSiebel',
                 description: '',
                 application: '5e476a593f836b0e8cc7c999',
@@ -89,7 +90,7 @@ app.listen(3000, function () {
                 integrationSuccess: { dialog: 'TODO:', lead: null }    //  TODO: Set Dialog MenuOfertas
             })
 
-            let Dialog5 = new DialogModel({
+            let Dialog3 = new DialogModel({
                 name: 'MenuOfertas',
                 description: '',
                 application: '5e476a593f836b0e8cc7c999',
@@ -100,7 +101,7 @@ app.listen(3000, function () {
                 active: true,
             })
 
-            let Dialog6 = new DialogModel({
+            let Dialog4 = new DialogModel({
                 name: 'AlteraPlanoCelular',
                 description: '',
                 application: '5e476a593f836b0e8cc7c999',
@@ -113,7 +114,7 @@ app.listen(3000, function () {
                 active: true,
             })
 
-            let Dialog7 = new DialogModel({
+            let Dialog5 = new DialogModel({
                 name: 'Transfer',
                 description: '',
                 application: '5e476a593f836b0e8cc7c999',
@@ -125,7 +126,7 @@ app.listen(3000, function () {
                 active: true,
             })
 
-            let Dialog8 = new DialogModel({
+            let Dialog6 = new DialogModel({
                 name: 'Despedida',
                 description: '',
                 application: '5e476a593f836b0e8cc7c999',
@@ -145,14 +146,12 @@ app.listen(3000, function () {
                 .catch(err => {
                     console.error(err)
                 })
-            Dialog1.save()
+            /*Dialog1.save()
             Dialog2.save()
             Dialog3.save()
             Dialog4.save()
             Dialog5.save()
-            Dialog6.save()
-            Dialog7.save()
-            Dialog8.save()
+            Dialog6.save()*/
 
             res.end(``)
 
@@ -270,13 +269,13 @@ app.listen(3000, function () {
                     console.error(err)
                 })
             Prompt1.save()
-            Prompt2.save()
+            /*Prompt2.save()
             Prompt3.save()
             Prompt4.save()
             Prompt5.save()
             Prompt6.save()
             Prompt7.save()
-            Prompt8.save()
+            Prompt8.save()*/
 
             res.end(``)
 
@@ -291,7 +290,7 @@ app.listen(3000, function () {
 
             let Plugin = new PluginModel({
                 name: `Offer Intercept`,
-                description: `Intercepta a navegação atual do usuário e redireciona para outro Dialog se a condição for verdadeira.`,
+                description: `Intercepta a navegação atual do usuário e redireciona para outro Dialog imadiatamente, sem executar os demais plugins do Dialog correspondente.`,
                 pluginWorker: {
                     name: 'OfferRedirect',
                     pluginMethods: [{
@@ -340,18 +339,17 @@ app.listen(3000, function () {
 
             const BusinessRuleModel = require('./core/database/models/mongoose/BusinessRule')
 
-            let BusinessRule2 = new BusinessRuleModel({
+            let BusinessRule = new BusinessRuleModel({
                 name: `Saudacao Inicial Dinãmica`,
                 type: 'prompt',
-                typeId: '', //  TODO: id Prompt Saudacao
+                typeId: '5e4cd63d3f378a44c01449ad', //  Prompt Saudacao
                 method: null,
                 inputList: [],  //  prompts dinamicos ja possuem os inputs para executar as condições.
                 description: "Tratamento de saudação de acordo com a hora do dia : 00:00 ate 11:59 = 'Bom dia!'/ 12:00 ate 17:59 = 'Boa tarde!' / 18:00 ate 23:59 = 'Boa noite!'",
                 example: "Se horario da requisição = 9h da manhã, retorna prompt de 'Bom dia!'",
-                //expires: 1000
             })
 
-            let BusinessRule4 = new BusinessRuleModel({
+            let BusinessRule1 = new BusinessRuleModel({
                 name: `Consulta Inicial Siebel`,
                 type: 'integration',
                 typeId: '5e48c9fcca9e054250f264bc',  //  Integracao Siebel
@@ -371,7 +369,7 @@ app.listen(3000, function () {
                 //expires: 1000    //  controla quando a regra deve ser revalidada e atualizada no redis                
             })
 
-            let BusinessRule5 = new BusinessRuleModel({
+            let BusinessRule2 = new BusinessRuleModel({
                 name: `MenuOfertas`,
                 type: 'prompt',
                 typeId: '', //  TODO: id prompt MenuOfertas
@@ -382,7 +380,7 @@ app.listen(3000, function () {
                 //expires: 1000
             })
 
-            let BusinessRule6 = new BusinessRuleModel({
+            let BusinessRule3 = new BusinessRuleModel({
                 name: `AlteraPlanoCelular`,
                 type: 'integration',
                 typeId: '5e48c9fcca9e054250f264bc',  //  Integração Siebel
@@ -404,11 +402,11 @@ app.listen(3000, function () {
                 //expires: 1000
             })
 
-            let BusinessRule7 = new BusinessRuleModel({
+            let BusinessRule4 = new BusinessRuleModel({
                 name: `Oferta de Promoção Dia das Mães`,
                 type: 'plugin',
-                typeId: '5e48c9fcca9e054250f264ba',
-                method: '5e48c9fcca9e054250f264bb',
+                typeId: 'TODO:',    //  Offer Plugin
+                method: 'TODO:',    //  offerIntercept
                 inputList: [{
                     modelId: '5e48e0e2fc55ac3fe0532224',    //  param.periodoPromoMaes
                     modeltype: 'parameter',
@@ -440,7 +438,7 @@ app.listen(3000, function () {
                 //expires: 1000
             })
 
-            let BusinessRule8 = new BusinessRuleModel({
+            let BusinessRule5 = new BusinessRuleModel({
                 name: `M4U - AdesaoPromo Mães`,
                 type: 'integration',
                 typeId: 'TODO:',    //  M4u
@@ -460,7 +458,7 @@ app.listen(3000, function () {
                 //expires: 1000
             })
 
-            let BusinessRule9 = new BusinessRuleModel({
+            let BusinessRule6 = new BusinessRuleModel({
                 name: `Transfer`,
                 type: 'plugin',
                 typeId: '5e3b25b55aa36d112c208b25',  //  Lead Manager
@@ -475,7 +473,7 @@ app.listen(3000, function () {
                 //expires: 1000
             })
 
-            let BusinessRule9 = new BusinessRuleModel({
+            let BusinessRule7 = new BusinessRuleModel({
                 name: `Despedida`,
                 type: 'plugin',
                 typeId: '5e3b25b55aa36d112c208b25',  //  Goodbye
@@ -630,12 +628,12 @@ app.listen(3000, function () {
                 description: "Houve falha no momento da adesão na promcão do Dia das Mães.",
             })
 
-            let DataPath14 = new DataPathModel({
+            let DataPath21 = new DataPathModel({
                 path: `lead.transferidoBO`,
                 description: "Indica que o usuário entrou em contato para algum assunto.",
             })
 
-            let DataPath14 = new DataPathModel({
+            let DataPath22 = new DataPathModel({
                 path: `lead.concluiExperienciaUsuario`,
                 description: "Indica que o usuário entrou em contato para algum assunto.",
             })
@@ -650,7 +648,7 @@ app.listen(3000, function () {
                     console.error(err)
                 })
 
-            DataPath1.save()
+            /*DataPath1.save()
             DataPath2.save()
             DataPath3.save()
             DataPath4.save()
@@ -662,14 +660,16 @@ app.listen(3000, function () {
             DataPath10.save()
             DataPath11.save()
             DataPath12.save()
-            DataPath13.save()
-            DataPath14.save()
+            DataPath13.save()*/
+            DataPath14.save()/*
             DataPath15.save()
             DataPath16.save()
             DataPath17.save()
             DataPath18.save()
             DataPath19.save()
             DataPath20.save()
+            DataPath21.save()
+            DataPath22.save()*/
 
             res.end(``)
 
@@ -810,12 +810,16 @@ app.listen(3000, function () {
 
         }),
 
-        app.get('/hub/dialogs/ani/:ani/:dialog', (req, res) => {
+        //
+        // Channel : Voice API
+        //  
+        //
+        app.get('/hub/voice/sipchannel/:sipchannel/:application', (req, res) => {
 
-            let welcomeMessage = `REQUEST [${req.params.ani}] DIALOG : ${req.params.dialog}`
-            console.log(`[${req.session.id}] ${welcomeMessage}`)
+            tracelog(`SIP_CHANNEL [${req.params.sipchannel}] APPLICATION [${req.params.application}] arrived!`)
 
-            DialogRunner.Render(req, res, req.session)
+            fakeSipIntegration(req, res)
+
         }),
 
         app.get('/hub/:ani/:dialog/:option', (req, res) => {
@@ -826,7 +830,66 @@ app.listen(3000, function () {
             DialogRunner.ExecuteOption(req, res, req.session)
         })
 
+    var fakeSipIntegration = function (req, res, next) {
 
+        // TODO: Fix Fake method with right one
+        // Recuperar o ANI do usuario através do sipchannel
+        // Identificar a aplicação que vai ser apresentada
+
+        let ani = null
+
+        switch (req.params.sipchannel) {
+            case '1':
+                ani = '21999991111'
+                break;
+            case '2':
+                ani = '21999992222'
+                break;
+            case '3':
+                ani = '21999993333'
+                break;
+            default:
+                trace(`LOGGED fakeSipIntegration() ani not found on this sipchannel.`);
+                res.end(`Missing valid parameter`)
+        }
+
+        tracelog(`ANI set to ${ani}`);
+
+        saveToRedis('user.ani', ani)
+
+        callInitDialog(req, res)
+
+    };
+
+    var saveToRedis = function (key, info) {
+
+        client.set(key, info, redis.print);
+        tracelog(`Saved to redis: ${key} = ${info}`);
+
+    }
+
+    //  Determina o proximo Dialog após identificar qual aplicação o usuário deseja acessar
+    var callInitDialog = function (req, res) {
+
+        tracelog(`Loading Welcome Dialog...`)
+
+        switch (req.params.application) {
+            case 'R1':
+                req.params.dialog = `Saudacao_Inicial`
+                break;
+            case `R2`:
+                req.params.dialog = `Saudacao_Inicial_Outra_Aplicacao`
+                break;
+            default:
+                tracelog(`Missing valid application.`);
+                res.end(`Missing valid parameter`)
+        }
+
+        tracelog(`Dialog set to ${req.params.dialog}`);
+
+        DialogRunner.Render(req, res, req.session)
+
+    }
 
 })
 
