@@ -857,7 +857,7 @@ app.listen(3000, function () {
 
         saveToRedis('user.ani', ani)
 
-        callInitDialog(req, res)
+        welcomeDialog(req, res)
 
     };
 
@@ -869,7 +869,7 @@ app.listen(3000, function () {
     }
 
     //  Determina o proximo Dialog após identificar qual aplicação o usuário deseja acessar
-    var callInitDialog = function (req, res) {
+    var welcomeDialog = function (req, res) {
 
         tracelog(`Loading Welcome Dialog...`)
 
@@ -887,7 +887,7 @@ app.listen(3000, function () {
 
         tracelog(`Dialog set to ${req.params.dialog}`);
 
-        DialogRunner.Render(req, res, req.session)
+        DialogRunner.VoiceRender(req, res, req.session)
 
     }
 
